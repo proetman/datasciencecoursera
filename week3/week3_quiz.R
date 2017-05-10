@@ -1,13 +1,17 @@
-library(datasets)
-data(iris)
+Pass with 5/5
+
 
 # --- --- ---
 # Question 1
 # --- --- ---
+rm(list=ls())
+library(datasets)
+data(iris)
 
 s <- split(iris,  iris$Species)
 s_v <- s$virginica
 mean(s_v$Sepal.Length)
+round(mean(s_v$Sepal.Length))
 
 # --- --- ---
 # Question 2
@@ -57,7 +61,8 @@ sapply(split(mtcars$mpg, mtcars$cyl), mean)
 # Question 4
 # --- --- ---
 # what is the absolute difference between the average horsepower of 4-cylinder cars and the average horsepower of 8-cylinder cars?
-tapply(mtcars$hp, mtcars$cyl, mean)
+x <- tapply(mtcars$hp, mtcars$cyl, mean)
+round(x[['8']] - x[['4']])
 209.21429 -  82.63636
 round(126.5779)
 # --- --- ---
