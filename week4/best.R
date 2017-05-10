@@ -80,6 +80,18 @@ validate_parameter_string <- function(p_param, p_all_values)
         #       boolean: true: valid outcome
         #                false: invalid outcome
         #
+        if (is.na(p_param))
+                return(FALSE)
+
+        if (! is.vector(p_param))
+                return(FALSE)
+
+        if (length(p_param) != 1)
+                return(FALSE)
+
+        if (class(p_param) != 'character')
+                return(FALSE)
+
         if (toupper(p_param) %in% toupper(p_all_values))
         {
                 return(TRUE)
@@ -132,7 +144,36 @@ csv_data_load <- function(p_directory, p_csv_filename)
 
         return(outcome_data)
 }
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    csv data load
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
+fetch_state <- function(p_outcome_data, p_state, p_outcome)
+{
+        # fetch state: Fetch all the data from p_outcome_data
+        #              that relates to an individual state
+        # Parameters
+        #   p_outcome_data: data.frame of all outcome data
+        #   p_state: character vector of length 1
+        #            Data relates to column in Data.Frame called State
+        #            This value has been pre-validated.
+        #   p_outcome: character vector of length 1
+        #              Data relates to column in Data.Frame called
+        #
+        # returns
+        #       dataframe of data from the file
+        #       where the column State = p_state
+
+        # split the data is a list of DF, one per state
+        outcome_by_state <- split(p_outcome_data, p_outcome_data$State)
+
+        # Fetch the data frame for this state only
+        ret_outcome <- outcome_by_state[[p_state]]
+
+        return(ret_outcome)
+}
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
 #                        best
@@ -160,8 +201,13 @@ best <- function(state, outcome) {
                 stop('invalid outcome')
         }
 
-        # all finished now, return to project directory
-        dir_set_default_working()
+        result_data <- fetch_data(outcome_data, state, outcome)
+ 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack'
+ 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure'
+ 'Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia'
+        outcome_data <- fetch_outcome(state)
+        dim(state_data)
+        # best_state_result <- best_fetch(outcome_data, outcome)
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
