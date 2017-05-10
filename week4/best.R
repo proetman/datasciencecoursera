@@ -144,36 +144,93 @@ csv_data_load <- function(p_directory, p_csv_filename)
 
         return(outcome_data)
 }
+
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
-#                    csv data load
+#                    fetch state data
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-fetch_state <- function(p_outcome_data, p_state, p_outcome)
+fetch_state_data <- function(p_outcome_data, p_state)
 {
-        # fetch state: Fetch all the data from p_outcome_data
-        #              that relates to an individual state
+        # fetch_state_data: Fetch all the data from p_outcome_data
+        #                   that relates to an individual state
+        #
         # Parameters
         #   p_outcome_data: data.frame of all outcome data
+        #
         #   p_state: character vector of length 1
         #            Data relates to column in Data.Frame called State
         #            This value has been pre-validated.
-        #   p_outcome: character vector of length 1
-        #              Data relates to column in Data.Frame called
         #
         # returns
         #       dataframe of data from the file
         #       where the column State = p_state
 
-        # split the data is a list of DF, one per state
+        # First, split the data is a list of DF, one per state
         outcome_by_state <- split(p_outcome_data, p_outcome_data$State)
 
-        # Fetch the data frame for this state only
+        # Then fetch the data frame for this state only
         ret_outcome <- outcome_by_state[[p_state]]
 
+        # return the subset of data for just this state.
         return(ret_outcome)
 }
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    fetch state data
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+fetch_outcome_data <- function(p_state_data, p_outcome)
+{
+        # fetch state: Fetch all the data from p_outcome_data
+        #              that relates to an individual state
+        # Parameters
+        #   p_state_data: data.frame of all outcome data for a state
+
+        #   p_outcome: character vector of length 1
+        #              determine which column of data will be used to
+        #              order by
+        #
+        # returns
+        #       dataframe of data from the file
+        #       where the column State = p_state
+
+        # Identify the potential columns by outcome type
+        l_ha <- 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack'
+        l_hf <- 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure'
+        l_pn <- 'Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia'
+
+        # isolate which column will be used for first sort
+        if (toupper(p_outcome) == 'HEART ATTACK')
+                p_col <- l_ha
+        else if (toupper(p_outcome) == 'HEART FAILURE')
+                p_col <- l_hf
+        else
+                p_col <- l_pn
+
+        # Create a vector of the columns to extract
+        result_cols <- c('Hospital.Name', p_col)
+
+        # extract the columns to return. These are the only columns
+        # that are required for determining the "best" hospital.
+        result_data <- p_state_data[, result_cols]
+
+        # Rename the column headings. This will ensure all future references
+        # to this data frame will "know" absolutely what the column headings
+        # are
+        col_headings <- c('Hospital.Name', 'Sort.Order')
+        names(result_data) <- col_headings
+
+        # Remove hospitals with no data
+        f <- result_data[result_data$Sort.Order != 'Not Available']
+
+        # return the result
+        return(result_data)
+}
+
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
 #                        best
@@ -201,13 +258,19 @@ best <- function(state, outcome) {
                 stop('invalid outcome')
         }
 
-        result_data <- fetch_data(outcome_data, state, outcome)
- 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack'
- 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure'
- 'Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia'
-        outcome_data <- fetch_outcome(state)
-        dim(state_data)
-        # best_state_result <- best_fetch(outcome_data, outcome)
+        # Narrow the data down to a single state
+        state_data <- fetch_state_data(outcome_data, state)
+
+        # Now extract the Hospital and sort order column by outcome
+        outcome_data <- fetch_outcome_data(state_data, outcome)
+
+        head(outcome_data)
+        # Sort the data
+        # result <- outcome_data[with(outcome_data,
+          #                           order('Sort.Order', 'Hospital.Name'))]
+
+        # head(result)
+
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
