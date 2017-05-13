@@ -68,7 +68,7 @@ dir_change <- function(p_dir)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
-#                    Validate Parmaeter String
+#                    Validate Parameter String
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Validate parameter string
@@ -114,6 +114,66 @@ validate_parameter_string <- function(p_param, p_all_values)
         {
                 return(FALSE)
         }
+}
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    Validate parameter num
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# Validate parameter num: ensure that the num parameter supplied is valid.
+#
+# Ensure that the parameter supplied is one of the following
+# On success, return integer
+# On failure, return empty vector
+
+validate_parameter_num <- function(p_num)
+{
+        # Validate parameter string p_param exists within the
+        # vector of all possible values.
+        # The comparison is case insensitive.
+        #
+        # parameters
+        #   p_param : character or numeric vector of length 1
+        #             best
+        #             worst
+        #             a positive integer
+        #
+        # returns
+        #       integer
+
+        na_vector <- c(NA)
+        retval <- na_vector    # default return value.
+
+        if (is.na(p_num))
+                retval <- na_vector
+
+        else if (! is.vector(p_num))
+                retval <- na_vector
+
+        else if (length(p_num) != 1)
+                retval <- na_vector
+
+        else if (class(p_num) == 'character'){
+                if (toupper(p_num) == 'BEST')
+                        retval <- 1
+                else if (toupper(p_num) == 'WORST')
+                        retval <- -1
+                else
+                        retval <- na_vector
+        }
+
+        else if  (class(p_num) == 'numeric') {
+                if (floor(p_num)==p_num & p_num > 0 )
+                        retval <- p_num
+                else
+                        retval <- na_vector
+        }
+        else
+                retval <- na_vector
+
+        return(retval)
+
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -201,6 +261,37 @@ fetch_state_data <- function(p_outcome_data, p_state)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
+#                    determine hospital name
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# determine which hospital to return from the list by the number value
+
+determine_hospital_name <- function(p_list, p_num) {
+        # determine hospital name from the list
+        # parameters
+        #   p_list: character vector of all hospitals
+        #   p_num: which hospital to return
+        #          -1 : last
+        #          1..n : (n = length of list), which hospital by number
+        #          >n: return c(NA)
+
+        na_vector <- c(NA)
+        list_length <- length(p_list)
+
+        if (p_num == -1)
+                retval <- tail(p_list,1)
+        else if (p_num > list_length)
+                retval <- na_vector
+        else {
+                # find last value from the head of the list.
+                #
+                retval <- tail(head(p_list,p_num),1)
+        }
+        return(retval)
+}
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
 #                    fetch outcome data
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -266,18 +357,19 @@ fetch_outcome_data <- function(p_state_data, p_outcome)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
-#                        BEST
+#                        RANK HOSPITAL
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Best
 # Please see top of program for an outline of this function.
 # Essentially, find the "best" hospital by state for a particular outcome.
 
-best <- function(state, outcome) {
+rankhospital <- function(state, outcome, num = "best") {
         ## Read outcome data
         ## Check that state and outcome are valid
-        ## Return hospital name in that state with lowest 30-day death
-        ## rate
+        ## Return hospital name in that state with the given rank
+        ## 30-day death rate
+
         ##
         # Parameters
         #   state: character vector of length 1
@@ -290,6 +382,12 @@ best <- function(state, outcome) {
         #            which state is "best".
         #            Possible values are: 'Heart Attack', 'Heart Failure',
         #            and 'Pneumonia'
+        #
+        #   best: return the "num" ranked position, eg for num = 5, return the
+        #         5th best hospital. Other possible value are
+        #         "best" (also default value), returns the 1 rank
+        #         "worst": returns the lowest ranked hospital
+        #         If num > hospitals available, NA is returned.
         #
         # returns
         #       character vector of length 1
@@ -316,6 +414,13 @@ best <- function(state, outcome) {
                 stop('invalid outcome')
         }
 
+        # validate the num parameter
+        p_num <- validate_parameter_num(num)
+        if (is.na(p_num)) {
+                stop('invalid num')
+        }
+
+
         # Narrow the data down to a single state
         state_data <- fetch_state_data(outcome_data, state)
 
@@ -326,8 +431,11 @@ best <- function(state, outcome) {
         result <- outcome_data[with(outcome_data,
                                     order(Sort.Order, Hospital.Name)),]
 
-        # Print Top Hospital name
-        head(result$Hospital.Name,1)
+        # determine Top Hospital name
+        print_value <- determine_hospital_name(result$Hospital.Name, p_num)
+
+        # display result
+        print_value
 
 }
 
