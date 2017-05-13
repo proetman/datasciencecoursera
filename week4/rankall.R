@@ -223,17 +223,17 @@ csv_data_load <- function(p_directory, p_csv_filename)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
-#                    fetch state data
+#                    fetch all state data
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-# Fetch State Data
+# Fetch all State Data
 # Take the data supplied in first parameter, and extract the data into
 # a single data frame containing data for just a single state, supplied as the
 # second parameter. All other data is discarded.
 # As the program parameters have been validated, it is assumed that this
 # function will always return valid data.
 
-fetch_state_data <- function(p_outcome_data, p_state)
+fetch_all_state_data <- function(p_outcome_data)
 {
         # fetch_state_data: Fetch all the data from p_outcome_data
         #                   that relates to an individual state
@@ -241,9 +241,6 @@ fetch_state_data <- function(p_outcome_data, p_state)
         # Parameters
         #   p_outcome_data: data.frame of all outcome data
         #
-        #   p_state: character vector of length 1
-        #            Data relates to column in Data.Frame called State
-        #            This value has been pre-validated.
         #
         # returns
         #       dataframe of data from the file
@@ -288,6 +285,36 @@ determine_hospital_name <- function(p_list, p_num) {
                 retval <- tail(head(p_list,p_num),1)
         }
         return(retval)
+}
+
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    as.num
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# as num will convert a vector on strings to a vector of numerics
+# with the exception of the string passed into na.strings
+
+as.num = function(x, na.strings = "Not Available") {
+        # as.num: convert vector to numeric
+        #         excluding anything that cannot be converted
+        #         does not raise warning when a string is encounted as
+        #         as.numeric does.
+        #
+        # Parameters
+        #   x: initial vector to be converted
+        #   na.strings: exclusion, defaults to "Not Available"
+        #
+        # returns
+        #       vector of numerics
+
+        stopifnot(is.character(x))
+        na = x %in% na.strings
+        x[na] = 0
+        x = as.numeric(x)
+        x[na] = NA_real_
+        x
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -344,15 +371,11 @@ fetch_outcome_data <- function(p_state_data, p_outcome)
         col_headings <- c('Hospital.Name', 'Sort.Order')
         names(result_data) <- col_headings
 
-        # Remove hospitals with no data
-        result_data_clean <- result_data[result_data[['Sort.Order']] !=
-                                                 'Not Available', ]
-
-        result_data_clean[,'Sort.Order'] <- as.numeric(
-                result_data_clean[,'Sort.Order'])
+        result_data[,'Sort.Order'] <- as.num(
+                result_data[,'Sort.Order'])
 
         # return the result
-        return(result_data_clean)
+        return(result_data)
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -364,19 +387,15 @@ fetch_outcome_data <- function(p_state_data, p_outcome)
 # Please see top of program for an outline of this function.
 # Essentially, find the "best" hospital by state for a particular outcome.
 
-rankhospital <- function(state, outcome, num = "best") {
+rankall <- function(outcome, num = "best") {
         ## Read outcome data
         ## Check that state and outcome are valid
-        ## Return hospital name in that state with the given rank
-        ## 30-day death rate
+        ## For each state, find the hospital of the given rank
+        ## Return a data frame with the hospital names and the
+        ## (abbreviated) state name
 
         ##
         # Parameters
-        #   state: character vector of length 1
-        #          indicates which state the data fetched should be from.
-        #          Possible values are all the states of USA, as a 2 letter
-        #          abbreviation.
-        #
         #   outcome: character vector of length 1
         #            indicates which outcome will be used to determine
         #            which state is "best".
@@ -390,9 +409,10 @@ rankhospital <- function(state, outcome, num = "best") {
         #         If num > hospitals available, NA is returned.
         #
         # returns
-        #       character vector of length 1
-        #       This vector contains the name of the hospital that has the
-        #       best results for a particular outcome for a particular state.
+        #       dataframe with each states "num" ranked hospital.
+        #       eg if num=best, each states best hospital,
+        #          if num=5, each states fifth best hospital.
+
 
         # Load data
         outcome_data <- csv_data_load('ProgAss3_data',
@@ -403,11 +423,6 @@ rankhospital <- function(state, outcome, num = "best") {
 
         # create a list of unique outcomes.
         all_outcomes <- c('Heart Attack', 'Heart Failure', 'Pneumonia')
-
-        # Validate the state parameter exists in the dataset.
-        if ( ! validate_parameter_string(state, all_states)) {
-                stop('invalid state')
-        }
 
         # validate the outcome parameter exists in the pre-determined vector.
         if ( ! validate_parameter_string(outcome, all_outcomes)) {
@@ -420,22 +435,50 @@ rankhospital <- function(state, outcome, num = "best") {
                 stop('invalid num')
         }
 
+        # --- --- --- --- --- --- --- --- ---
+        # Start processing the data by state
+        # --- --- --- --- --- --- --- --- ---
 
-        # Narrow the data down to a single state
-        state_data <- fetch_state_data(outcome_data, state)
+        # Convert the data into a list of data frames by state
+        outcome_by_state <- outcome_by_state <- split(outcome_data,
+                                                      outcome_data$State)
 
-        # Now extract the Hospital and sort order column by outcome
-        outcome_data <- fetch_outcome_data(state_data, outcome)
 
-        # Sort the data into outcome/hospital order
-        result <- outcome_data[with(outcome_data,
-                                    order(Sort.Order, Hospital.Name)),]
+        state_count <- length(all_states)
+        result_df <- data.frame(hospital=character(state_count),
+                                state=character(state_count),
+                                stringsAsFactors=FALSE)
+        row_counter <- 1
 
-        # determine Top Hospital name
-        print_value <- determine_hospital_name(result$Hospital.Name, p_num)
+        for (state in sort(all_states)) {
 
-        # display result
-        print_value
+
+                # Then fetch the data frame for this state only
+                state_data <- outcome_by_state[[state]]
+
+                # Now extract the Hospital and sort order column by outcome
+                outcome_data <- fetch_outcome_data(state_data, outcome)
+
+                # Sort the data into outcome/hospital order
+                result <- outcome_data[with(outcome_data,
+                                            order(Sort.Order, Hospital.Name)),]
+
+                # determine Top Hospital name
+                numth_hospital <- determine_hospital_name(result$Hospital.Name,
+                                                          p_num)
+
+                # Assign the values to the data frame
+                result_df$hospital[row_counter] <- numth_hospital
+                result_df$state[row_counter] <- state
+
+                # Increment the df counter
+                row_counter <- row_counter + 1
+        }
+
+        # Assign the row name to be that of the State.
+        row.names(result_df) <- result_df$state
+
+        result_df
 
 }
 
