@@ -1,5 +1,6 @@
-# The program runs a function called "best" that will calculate the
-# hospital with the best (ie lowest) 30 day mortality rate based on the data
+# The program runs a function called "rankall" that will calculate the
+# hospital by state with the best (ie lowest), worst (ie highest), or ranked
+# (eg 5th best)  30 day mortality rate based on the data
 # from "outcome-of-care-measures.csv". This file originated in the
 # Hospital Compare website: http://hospitalcompare.hhs.gov. The purpose of this
 # site is to provide data and infomation about the quality of care at over
@@ -106,14 +107,11 @@ validate_parameter_string <- function(p_param, p_all_values)
         if (class(p_param) != 'character')
                 return(FALSE)
 
+        # The only case of success!
         if (toupper(p_param) %in% toupper(p_all_values))
-        {
                 return(TRUE)
-        }
-        else
-        {
-                return(FALSE)
-        }
+
+        return(FALSE)
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -259,11 +257,9 @@ determine_hospital_name <- function(p_list, p_num) {
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Fetch Outcome Data
-# Take the State data that has been supplied and extract the data into a single
-# data frame containing data for just a single outcome, supplied as the second
-# parameter. All other data is discarded.
-# As the program parameters have been validated, it is assumed that this
-# function will always return valid data.
+# Take the State data that has been supplied and extract the numth best
+# hospital
+#
 
 fetch_outcome_data <- function(p_state_data, p_outcome, p_num)
 {
@@ -271,14 +267,19 @@ fetch_outcome_data <- function(p_state_data, p_outcome, p_num)
         #              that relates to an individual state
         # Parameters
         #   p_state_data: data.frame of all outcome data for a state
-
+        #
         #   p_outcome: character vector of length 1
         #              determine which column of data will be used to
         #              order by
         #
+        #   p_num: which hospital to return
+        #          -1 : last
+        #          1..n : (n = length of list), which hospital by number
+        #          >n: return c(NA)
+        #
         # returns
-        #       dataframe of data from the file
-        #       where the column State = p_state
+        #       character vector of length 1
+        #       contains the name of the numth best hospital.
 
         # Identify the potential columns by outcome type
         l_ha <- 'Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack'
@@ -307,9 +308,11 @@ fetch_outcome_data <- function(p_state_data, p_outcome, p_num)
         col_headings <- c('Hospital.Name', 'Sort.Order')
         names(result_data) <- col_headings
 
+        # Remove hospitals with no data
         result_data_clean <- result_data[result_data[['Sort.Order']] !=
                                                  'Not Available', ]
 
+        # Convert the sort order column to numeric
         result_data_clean[,'Sort.Order'] <- as.numeric(
                 result_data_clean[,'Sort.Order'])
 
@@ -327,12 +330,13 @@ fetch_outcome_data <- function(p_state_data, p_outcome, p_num)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
-#                        RANK HOSPITAL
+#                        RANK ALL
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Best
 # Please see top of program for an outline of this function.
-# Essentially, find the "best" hospital by state for a particular outcome.
+# Essentially, find the "best", "worst", or ranked hospital for each state
+# for a particular outcome.
 
 rankall <- function(outcome, num = "best") {
         ## Read outcome data
@@ -356,7 +360,7 @@ rankall <- function(outcome, num = "best") {
         #         If num > hospitals available, NA is returned.
         #
         # returns
-        #       dataframe with each states "num" ranked hospital.
+        #       dataframe with each States "num" ranked hospital.
         #       eg if num=best, each states best hospital,
         #          if num=5, each states fifth best hospital.
 
@@ -379,7 +383,6 @@ rankall <- function(outcome, num = "best") {
                 stop('invalid num')
         }
 
-
         # Convert the data into a list of data frames by state
         outcome_by_state <- outcome_by_state <- split(outcome_data,
                                                       outcome_data$State)
@@ -387,7 +390,6 @@ rankall <- function(outcome, num = "best") {
         # find numth hospital for each dataframe (ie by state)
         outcome_by_state <- lapply(outcome_by_state, function(s_df)
                                    fetch_outcome_data(s_df, outcome, p_num))
-
 
         # convert the result into a dataframe
         result_df <- data.frame(unlist(outcome_by_state),

@@ -1,6 +1,7 @@
-# The program runs a function called "best" that will calculate the
-# hospital with the best (ie lowest) 30 day mortality rate based on the data
-# from "outcome-of-care-measures.csv". This file originated in the
+# The program runs a function called "rankhospital" that will calculate the
+# hospital with the best (ie lowest), worst (ie highest), or ranked (eg 5th
+#  best) 30 day mortality rate based on the data from
+#  "outcome-of-care-measures.csv". This file originated in the
 # Hospital Compare website: http://hospitalcompare.hhs.gov. The purpose of this
 # site is to provide data and infomation about the quality of care at over
 # 4,000 Medicare-certified hospitals in the U.S.
@@ -362,7 +363,8 @@ fetch_outcome_data <- function(p_state_data, p_outcome)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Best
 # Please see top of program for an outline of this function.
-# Essentially, find the "best" hospital by state for a particular outcome.
+# Essentially, find the "best", "worst", or ranked hospital for each state
+# for a particular outcome within a State.
 
 rankhospital <- function(state, outcome, num = "best") {
         ## Read outcome data
@@ -392,7 +394,8 @@ rankhospital <- function(state, outcome, num = "best") {
         # returns
         #       character vector of length 1
         #       This vector contains the name of the hospital that has the
-        #       best results for a particular outcome for a particular state.
+        #       numth best results for a particular outcome for a particular
+        #       state.
 
         # Load data
         outcome_data <- csv_data_load('ProgAss3_data',
