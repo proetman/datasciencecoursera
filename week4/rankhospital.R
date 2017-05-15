@@ -21,8 +21,7 @@ dir_proj_working <- 'c:/work/R/datasciencecoursera/week4'
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # Change directory to the global working directory defined for this project.
 
-dir_set_default_working <- function()
-{
+dir_set_default_working <- function(){
         # Change to the default working directory for
         # this weeks project/assignment.
         #
@@ -38,8 +37,7 @@ dir_set_default_working <- function()
 # On succes, return True
 # On error, return False.
 
-dir_change <- function(p_dir)
-{
+dir_change <- function(p_dir){
         # Change to directory
         # Parameters:
         #       p_dir:  character vector of len 1
@@ -51,14 +49,12 @@ dir_change <- function(p_dir)
         # this weeks assignment.
         #
 
-        if (nchar(p_dir) < 1)
-        {
+        if (nchar(p_dir) < 1){
                 print('ERROR: Parameter length zero, p_dir is mandatory')
                 return(FALSE)
         }
 
-        if ( ! dir.exists(p_dir) )
-        {
+        if ( ! dir.exists(p_dir)){
                 print('ERROR: target directory does not exist')
                 print(paste('       cannot change dir to [', p_dir, ']',sep=''))
                 return(FALSE)
@@ -78,8 +74,7 @@ dir_change <- function(p_dir)
 # On success, return True
 # On failure, return False
 
-validate_parameter_string <- function(p_param, p_all_values)
-{
+validate_parameter_string <- function(p_param, p_all_values){
         # Validate parameter string p_param exists within the
         # vector of all possible values.
         # The comparison is case insensitive.
@@ -107,14 +102,12 @@ validate_parameter_string <- function(p_param, p_all_values)
         if (class(p_param) != 'character')
                 return(FALSE)
 
+        # Only one to return success
         if (toupper(p_param) %in% toupper(p_all_values))
-        {
                 return(TRUE)
-        }
-        else
-        {
-                return(FALSE)
-        }
+
+        return(FALSE)
+
 }
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -128,8 +121,7 @@ validate_parameter_string <- function(p_param, p_all_values)
 # On success, return integer
 # On failure, return empty vector
 
-validate_parameter_num <- function(p_num)
-{
+validate_parameter_num <- function(p_num){
         # Validate parameter string p_param exists within the
         # vector of all possible values.
         # The comparison is case insensitive.
@@ -187,8 +179,7 @@ validate_parameter_num <- function(p_num)
 # On success, return the data as a data frame.
 # On failure, return an empty data frame.
 
-csv_data_load <- function(p_directory, p_csv_filename)
-{
+csv_data_load <- function(p_directory, p_csv_filename){
         # csv data load
         # Parameters
         #   p_directory: character vector of length 1
@@ -207,8 +198,7 @@ csv_data_load <- function(p_directory, p_csv_filename)
         # Ensure we are in the project working directory
         dir_set_default_working()
 
-        if ( ! dir_change(p_directory))
-        {
+        if ( ! dir_change(p_directory)){
                 err_txt <- 'ERRORS raised, please correct and retry. Aborting'
                 print(noquote(err_txt))
                 return(empty_dataframe)
@@ -234,8 +224,7 @@ csv_data_load <- function(p_directory, p_csv_filename)
 # As the program parameters have been validated, it is assumed that this
 # function will always return valid data.
 
-fetch_state_data <- function(p_outcome_data, p_state)
-{
+fetch_state_data <- function(p_outcome_data, p_state){
         # fetch_state_data: Fetch all the data from p_outcome_data
         #                   that relates to an individual state
         #
@@ -303,8 +292,7 @@ determine_hospital_name <- function(p_list, p_num) {
 # As the program parameters have been validated, it is assumed that this
 # function will always return valid data.
 
-fetch_outcome_data <- function(p_state_data, p_outcome)
-{
+fetch_outcome_data <- function(p_state_data, p_outcome){
         # fetch state: Fetch all the data from p_outcome_data
         #              that relates to an individual state
         # Parameters
