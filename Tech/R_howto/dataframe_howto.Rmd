@@ -1,0 +1,27 @@
+---
+title: "dataframe_howto.Rmd"
+author: "Paul roetman"
+date: "27 May 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Frame
+
+* tabular data
+* every element in col same, rows can be diff
+* matrices all have to be same, df not
+
+```{r}
+my_df <- data.frame(foo=1:4, bar=c(T,T,F,F))
+my_df
+```
+
+* Rename columns
+```{r}
+names(my_df) <- c('col1','col2')
+my_df
+```

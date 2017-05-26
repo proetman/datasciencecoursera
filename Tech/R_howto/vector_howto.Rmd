@@ -1,0 +1,21 @@
+---
+title: "vector_howto.Rmd"
+author: "Paul roetman"
+date: "27 May 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Vectors
+
+* Simple vector creation
+
+```{r}
+my_range <- 1:3
+my_range
+names(my_range) <- c('c1','c2','c3')
+my_range
+```

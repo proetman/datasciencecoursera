@@ -1,0 +1,44 @@
+Headings
+
+# Primary heading
+## Secondary heading
+### Tertiary heading
+
+
+Unordered Lists
+
+* first item
+* second item
+   + sub item
+       - sub sub item
+
+1. ordered list
+2. item 2
+   i) sub item
+
+(@) numbered list
+
+
+YAML Metadata
+----
+title: "doc title"
+author: "Bob Awesome"
+output: html_document
+params:
+    dataset: "florida"
+----
+
+Code Chunks
+``` {r setup}
+<code>
+```
+
+
+
+
+## Using Python
+```{python}
+import pandas
+x = 1
+print('display x = {}'.format(x))
+```

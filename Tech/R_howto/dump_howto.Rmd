@@ -1,0 +1,56 @@
+---
+title: "Dump R Code Howto"
+author: "Paul roetman"
+date: "27 May 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+```
+
+# Dump code to file
+
+
+## dput / dget
+
+Single object only
+
+```{r}
+dummy_file <- c('c:/temp/dummy.R')
+if (file.exists(dummy_file)) file.remove(dummy_file)
+
+y <- data.frame(a = 1, b = "a")
+# output to screen
+dput(y)
+# output to file
+dput(y, dummy_file)
+# read file
+new.y <- dget(dummy_file)
+# display
+new.y
+```
+
+
+## dump / source
+
+multiple objects to file
+
+```{r}
+x <- "foo"
+y <- data.frame(a = 1, b = "a")
+ 
+dump(c("x","y"), file=dummy_file)
+ 
+rm(x,y)
+source(dummy_file)
+x
+y
+
+```
+
+```{r, include=FALSE}
+if (file.exists(dummy_file)) file.remove(dummy_file)
+```

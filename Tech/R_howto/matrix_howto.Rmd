@@ -1,0 +1,21 @@
+---
+title: "Matrix Howto"
+author: "Paul roetman"
+date: "27 May 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Matrix Howto
+
+
+## Create Matrix
+
+```{r}
+m <- matrix(1:4, nrow=2, ncol=2)
+dimnames(m) <- list(c('r1','r2'), c('c1','c2'))
+m
+```
