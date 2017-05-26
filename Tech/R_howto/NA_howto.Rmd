@@ -1,0 +1,28 @@
+---
+title: "NA howto"
+author: "Paul roetman"
+date: "27 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# NA Howto
+
+Setup variables
+```{r}
+ x <- c(1,2,NA,4,NA,5)
+```
+
+Extract "good" values
+```{r}
+ bad <- is.na(x)
+y <- x[!bad]
+y
+```
+Up to "Week 1 - R nuts and bolts"

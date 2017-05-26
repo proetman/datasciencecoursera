@@ -61,17 +61,59 @@ my_list$bar
 ```
 
 
- To return the first and third elements as a list:
+To return the first and third elements as a list:
 ```{r}
 my_list<- list(foo = 1:4, bar = 0.6, baz = "hi")
 my_list[c(1,3)]
 ```
 
-# Use double bracket to reference list element by variable  
+Use double bracket to reference list element by variable  
 ```{r}
 name <- "foo"
 my_list[[name]]
-my_list$name
+my_list$name            # fails
 
 ```
+
+## Subset Lists of List
+
+create list of lists
+```{r}
+x <- list(a=list(10,12,14), b=c(1,2))
+x
+```
+
+pull out third element of the first list
+```{r}
+x[[c(1,3)]]
+x[[1]][[3]]
+```
+
+## Subset Matrix
+
+
+Create a matrix
+```{r}
+x <- matrix(1:6, 2,3)
+x
+```
+
+subset an element, note that the result is a vector, not a matrix
+```{r}
+x[1,2]
+```
+
+extract a row or col (result is a vector)
+```{r}
+x[1,]
+x[,1]
+```
+
+
+extract a matrix, don't drop the MATRIX type, returns a 1,1 matrix
+```{r}
+x[1,2, drop=FALSE]
+```
+
+
 
