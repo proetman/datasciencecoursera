@@ -8,6 +8,8 @@ rm(list=ls())
 library(swirl)
 swirl()
 
+install_from_swirl("Getting and Cleaning Data")
+
 
 
 # Note: to exit

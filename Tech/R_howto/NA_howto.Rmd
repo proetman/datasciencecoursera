@@ -26,3 +26,4 @@ y <- x[!bad]
 y
 ```
 Up to "Week 1 - R nuts and bolts"
+DAta Frame - Removing NA Values
