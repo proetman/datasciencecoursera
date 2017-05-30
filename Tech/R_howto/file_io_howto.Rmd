@@ -1,0 +1,49 @@
+---
+title: "file_io_howto.Rmd"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+* file, opens connection to file
+* gzfile, open conn to compressed file with gzip
+* bzfile, open conn to compressed file with gzip
+* url, open conn to webpage
+
+```{r}
+# create a file
+myfile <- c('dummy.csv')
+df <- data.frame(col1=1:6, col2=11:16, col3=sample(letters,6))
+write.csv(df, file=myfile, quote=FALSE)
+
+con <- file(myfile, "r")
+data <- read.csv(con)
+
+str(con)
+
+close(con)
+```
+
+
+These two are equiv
+```{r}
+con <- file(myile, "r")
+data <- read.csv(con)
+close(con)
+# same as
+data <- read.csv(myfile)
+```
+
+
+Read from a website
+```{r}
+con <- url("http://www.google.com","r")
+x <- readLines(con)
+head(x)
+```

@@ -1,0 +1,50 @@
+---
+title: "read.table() howto"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# read.table() howto
+
+most common used function for reading data. 
+
+args:
+
+* file: name of file or connection
+* heading: T/F header line
+* sep: string seperator
+* colClasses, char vector of class of each col
+* nrows, number of rows in dataset (?? is the same as max lines to read???)
+* skip, skip first x lines
+* stringAsFactors - should char var be coded as factors
+
+## Warnings
+
+* read help
+* calc mem
+    * rows * cols * size of each col (number=8)
+* set comment.char = "" if no comment lines
+* colClasses important for large data sets. If only one colClasses, then assumes all columns same.
+
+## Quick'n'Dirty method
+
+```{r}
+myfile <- c('dummy.csv')
+df <- data.frame(col1=1:6, col2=11:16, col3=sample(letters,6))
+write.csv(df, file=myfile, quote=FALSE)
+
+initial <- read.table(myfile, nrows=3, header=TRUE)
+classes <- sapply(initial, class)
+classes    # reports incorrect, should be NNNNNNCCC
+tabAll <- read.table(myfile, colClasses=classes, , header=TRUE)
+
+if (file.exists(myfile)) file.remove(myfile)
+```

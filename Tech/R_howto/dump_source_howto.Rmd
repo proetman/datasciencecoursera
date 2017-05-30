@@ -1,0 +1,39 @@
+---
+title: "Dump R Code Howto"
+author: "Paul roetman"
+date: "27 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+```
+
+# Dump code to file
+
+
+## dump / source
+
+multiple objects to file
+
+```{r}
+x <- "foo"
+y <- data.frame(a = 1, b = "a")
+ 
+dump(c("x","y"), file=dummy_file)
+ 
+rm(x,y)
+source(dummy_file)
+x
+y
+
+```
+
+```{r, include=FALSE}
+if (file.exists(dummy_file)) file.remove(dummy_file)
+```

@@ -2,7 +2,10 @@
 title: "List Howto"
 author: "Paul roetman"
 date: "27 May 2017"
-output: html_document
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
@@ -22,4 +25,10 @@ my_list
 element_names <- c('e1','e2')
 names(my_list) <- element_names
 my_list
+```
+
+### Different Types
+```{r}
+x <- list(1, "a", T, 1+4i)
+x
 ```

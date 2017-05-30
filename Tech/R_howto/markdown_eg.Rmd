@@ -2,7 +2,10 @@
 title: "Test Doc"
 author: "Paul roetman"
 date: "27 May 2017"
-output: html_document
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}

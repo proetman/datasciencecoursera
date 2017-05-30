@@ -2,7 +2,10 @@
 title: "dataframe_howto.Rmd"
 author: "Paul roetman"
 date: "27 May 2017"
-output: html_document
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
@@ -14,6 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * tabular data
 * every element in col same, rows can be diff
 * matrices all have to be same, df not
+* read.table() and read.csv() create DF
 
 ```{r}
 my_df <- data.frame(foo=1:4, bar=c(T,T,F,F))
@@ -24,4 +28,37 @@ my_df
 ```{r}
 names(my_df) <- c('col1','col2')
 my_df
+```
+
+### convert to matrix
+use data.matrix() to convert df to matrix; will use forced coercion.
+
+```{r}
+x <- data.frame(foo=1:4, bar=c(T,T,F,F))
+x
+data.matrix(x)
+```
+
+### Dump df
+```{r}
+df <- data.frame(a=1, b=2, c='a')
+dump(c('df'), file='dummy.csv')
+rm(df)
+source('dummy.csv')
+df
+```
+
+### Write DF to CSV
+
+```{r}
+myfile <- c('dummy.csv')
+df <- data.frame(col1=1:6, col2=11:16, col3=sample(letters,6))
+write.csv(df, file=myfile, quote=FALSE)
+
+initial <- read.table(myfile, nrows=3, header=TRUE)
+classes <- sapply(initial, class)
+classes    # reports incorrect, should be NNNNNNCCC
+tabAll <- read.table(myfile, colClasses=classes, , header=TRUE)
+
+if (file.exists(myfile)) file.remove(myfile)
 ```

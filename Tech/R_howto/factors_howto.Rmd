@@ -1,0 +1,41 @@
+---
+title: "factors_howto.Rmd"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Factors howto
+
+* represent categorical data as levels
+* ordered or unordered
+* it is basically an integer vector with named variables (ie self describing)
+* lm and glm treat them as very special
+
+## Create factor
+```{r}
+x <- factor(c("yes","yes", "no", "yes", "no"))
+x
+
+```
+
+### summarize factor
+```{r}
+table(x)
+
+```
+
+### Factor info
+Don't really understand the benefit of this.
+
+```{r}
+unclass(x)           # get the underlying values
+attr(x, "levels")    # get specific attributes of factor
+```

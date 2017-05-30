@@ -14,6 +14,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # NA Howto
 
+Missing values denoted by NA, or NaN for undefined math op.
+NA have class, so there is an NA integer, NA character, etc
+
+## Tests
+
+* is.na()         # test to see if object is NA
+* is.nan()       
+
 Setup variables
 ```{r}
  x <- c(1,2,NA,4,NA,5)
@@ -27,3 +35,20 @@ y
 ```
 Up to "Week 1 - R nuts and bolts"
 DAta Frame - Removing NA Values
+
+
+### NaN and NA
+
+NaN is NA, but NA is not always NaN
+
+```{r}
+x <- c(1,2,NA,10,3)
+is.na(x)
+is.nan(x)
+
+x <- c(1,2,NA,NaN,3)
+is.na(x)
+is.nan(x)
+
+
+```

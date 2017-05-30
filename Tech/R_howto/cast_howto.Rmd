@@ -1,0 +1,36 @@
+---
+title: "Cast howto"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Cast
+
+Underlying class does not change:
+
+```{r}
+x <- 0:6
+x
+class(x)
+
+y <- as.numeric(x)
+y
+class(y)
+
+y <- as.logical(x)
+y
+class(y)
+
+y <- as.character(x)
+y
+class(y)
+
+```
