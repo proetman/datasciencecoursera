@@ -42,3 +42,54 @@ x
 Note: list is special vector, can contain different types.
 
 Don't mix types, R will coerce (badly)
+
+## Referencing vectors
+
+```{r}
+x <- c('a','b','c','d','e')
+x[1]
+x[2:4]
+x[x>'c']
+x_res<- x>'c'
+x[x_res]
+```
+
+### Remove missing values
+
+```{r} 
+x <- c(1,2,NA,4,NA,5)
+x
+bad <- is.na(x)
+x[!bad]
+```
+
+### Complete Cases
+Campare 2 vectors/lists/? return only cases where both are not NA.
+
+```{r}
+x <- c(1,2,NA,4,NA,5)
+y <- c('a','b',NA,'d', NA, NA)
+good <- complete.cases(x,y)
+good
+x[good]
+y[good]
+```
+
+### Vectorised operations
+
+Operations on vectors occur as you would expect!
+
+```{r}
+x <- 1:4; y<- 6:9
+x + y
+y == 8
+x * y
+```
+
+Other examples
+
+```{r}
+z <- c(1,2,3)
+z * 2 + 100     # actual calc: z * c(2,2,2) + c(100,100,100)
+
+ c(1, 2, 3, 4) + c(0,10) #  actual calc:  c(1, 2, 3, 4) + c(0,10,0,10)

@@ -1,0 +1,49 @@
+---
+title: "Readr Howto"
+author: "Paul roetman"
+date: "31 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# READR Howto
+
+## READR
+
+library(readr)
+
+    name  class final midterm
+1  Brian class1     B       B
+2  Brian class5     C       A
+3   Jeff class2     E       D
+4   Jeff class4     C       A
+5  Karen class3     C       C
+6  Karen class4     A       A
+7  Roger class2     A       C
+8  Roger class5     A       B
+9  Sally class1     C       A
+10 Sally class3     C       B
+
+students3 %>%
+  gather(class, grade, class1:class5, na.rm = TRUE) %>%
+  spread(test, grade) %>%
+  mutate(class = parse_number(class)) %>%
+  print
+
+    name  class final midterm
+1  Brian class1     B       B
+2  Brian class5     C       A
+3   Jeff class2     E       D
+4   Jeff class4     C       A
+5  Karen class3     C       C
+6  Karen class4     A       A
+7  Roger class2     A       C
+8  Roger class5     A       B
+9  Sally class1     C       A
+10 Sally class3     C       B

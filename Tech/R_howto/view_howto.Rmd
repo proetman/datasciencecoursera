@@ -1,0 +1,21 @@
+---
+title: "View howto"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# View  ?is this part of dplyr????
+
+display DF in window
+
+```{r}
+view(df)  
+```

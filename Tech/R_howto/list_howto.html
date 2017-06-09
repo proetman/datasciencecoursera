@@ -123,11 +123,24 @@ $(document).ready(function () {
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#list-howto"><span class="toc-section-number">1</span> List Howto</a><ul>
+<li><a href="#create-list"><span class="toc-section-number">1.1</span> Create List</a><ul>
+<li><a href="#rename-elements"><span class="toc-section-number">1.1.1</span> Rename elements</a></li>
+<li><a href="#different-types"><span class="toc-section-number">1.1.2</span> Different Types</a></li>
+<li><a href="#reference-lists"><span class="toc-section-number">1.1.3</span> Reference Lists</a></li>
+<li><a href="#lists-of-lists"><span class="toc-section-number">1.1.4</span> Lists of lists</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="list-howto" class="section level1">
-<h1>List Howto</h1>
+<h1><span class="header-section-number">1</span> List Howto</h1>
 <div id="create-list" class="section level2">
-<h2>Create List</h2>
+<h2><span class="header-section-number">1.1</span> Create List</h2>
+<p>Lists can contain different types.</p>
 <pre class="r"><code>my_list &lt;- list(a=1, b=2)
 my_list</code></pre>
 <pre><code>## $a
@@ -136,7 +149,7 @@ my_list</code></pre>
 ## $b
 ## [1] 2</code></pre>
 <div id="rename-elements" class="section level3">
-<h3>Rename elements</h3>
+<h3><span class="header-section-number">1.1.1</span> Rename elements</h3>
 <pre class="r"><code>element_names &lt;- c('e1','e2')
 names(my_list) &lt;- element_names
 my_list</code></pre>
@@ -145,6 +158,85 @@ my_list</code></pre>
 ## 
 ## $e2
 ## [1] 2</code></pre>
+</div>
+<div id="different-types" class="section level3">
+<h3><span class="header-section-number">1.1.2</span> Different Types</h3>
+<pre class="r"><code>x &lt;- list(1, &quot;a&quot;, T, 1+4i)
+x</code></pre>
+<pre><code>## [[1]]
+## [1] 1
+## 
+## [[2]]
+## [1] &quot;a&quot;
+## 
+## [[3]]
+## [1] TRUE
+## 
+## [[4]]
+## [1] 1+4i</code></pre>
+</div>
+<div id="reference-lists" class="section level3">
+<h3><span class="header-section-number">1.1.3</span> Reference Lists</h3>
+<p>Return as a list</p>
+<pre class="r"><code>x &lt;- list(foo = 1:4, bar = 0.6, fff = 'c')
+x</code></pre>
+<pre><code>## $foo
+## [1] 1 2 3 4
+## 
+## $bar
+## [1] 0.6
+## 
+## $fff
+## [1] &quot;c&quot;</code></pre>
+<pre class="r"><code>b = x[1]    # just first element as a new list
+class(b)</code></pre>
+<pre><code>## [1] &quot;list&quot;</code></pre>
+<pre class="r"><code>b</code></pre>
+<pre><code>## $foo
+## [1] 1 2 3 4</code></pre>
+<pre class="r"><code>x[&quot;bar&quot;]    </code></pre>
+<pre><code>## $bar
+## [1] 0.6</code></pre>
+<p>Return as a vector</p>
+<pre class="r"><code>b = x[[1]]  # returns a vector
+class(b)</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
+<pre class="r"><code>b</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<pre class="r"><code>x$bar       # also returns a vector</code></pre>
+<pre><code>## [1] 0.6</code></pre>
+<pre class="r"><code>x$b         # partial match</code></pre>
+<pre><code>## [1] 0.6</code></pre>
+<pre class="r"><code>x$f         # fails as there are two starting with &quot;f&quot; </code></pre>
+<pre><code>## NULL</code></pre>
+<p>Use double brackets to reference list by var</p>
+<pre class="r"><code>name &lt;- &quot;foo&quot;
+x[[name]]</code></pre>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<pre class="r"><code>x$name           # fails</code></pre>
+<pre><code>## NULL</code></pre>
+</div>
+<div id="lists-of-lists" class="section level3">
+<h3><span class="header-section-number">1.1.4</span> Lists of lists</h3>
+<pre class="r"><code>x &lt;- list(a=list(10,12,14), b=c(1,2))
+x</code></pre>
+<pre><code>## $a
+## $a[[1]]
+## [1] 10
+## 
+## $a[[2]]
+## [1] 12
+## 
+## $a[[3]]
+## [1] 14
+## 
+## 
+## $b
+## [1] 1 2</code></pre>
+<pre class="r"><code>x[[c(1,3)]]   # 3rd element of 1st list</code></pre>
+<pre><code>## [1] 14</code></pre>
+<pre class="r"><code>x[[1]][[3]]   # 3rd element of 1st list</code></pre>
+<pre><code>## [1] 14</code></pre>
 </div>
 </div>
 </div>

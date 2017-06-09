@@ -1,0 +1,87 @@
+---
+title: "Tidyr Howto"
+author: "Paul roetman"
+date: "31 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tidyr Howto
+
+
+## GATHER
+takes multiple cols, callapses into key-value pairs (use when have columns that are not variables)
+
+```{r} 
+library(tidyr)
+grade <- c('A','B','C','D','E')
+male <- sample(1:10, 5, replace=TRUE)
+female <- sample(1:10, 5, replace=TRUE)
+
+students <- data.frame(grade, male, female)
+students
+
+gather(students, sex, count, -grade)
+
+```
+
+
+Each row of the data now represents exactly one observation, characterized by a unique combination of the grade and sex variables. Each of our variables (grade, sex, and count) occupies exactly one column. Thats tidy data!
+
+## SEPARATE
+
+default sep is something that is not a letter or number (like an underscore). Otherwise specify a regex pattern.
+
+```{r}
+grade <- c('A','B','C','D','E')
+male_1 <- sample(1:10, 5, replace=TRUE)
+female_1 <- sample(1:10, 5, replace=TRUE)
+male_2 <- sample(1:10, 5, replace=TRUE)
+female_2 <- sample(1:10, 5, replace=TRUE)
+
+students2 <- data.frame(grade, male_1, female_1, male_2, female_2)
+students2
+
+res <- gather(students2, sex_class, count, -grade)
+res
+
+separate(res, sex_class,c("sex", "class"))
+```
+
+## CHAIN commands
+
+Use chaining to simplify. This does the same job as above.
+
+```{r}
+students2 %>%
+  gather(sex_class, count, -grade) %>%
+  separate(sex_class,c("sex", "class")) %>%
+  print
+```
+
+
+## SPREAD
+
+spread a key/value across multiple columns
+```{r}
+names <- c('Sally','Sally','Brian','Brian')
+test <-  c('Midterm','Final','Midterm','Final')
+class <-  c('Class1','Class1','Class1','Class1')
+grade <- sample(LETTERS[1:5],  4, replace=TRUE)
+
+students3 <- data.frame(names, test, class, grade)
+students3
+
+
+students3 %>%
+  spread(test ,grade ) %>%
+  print
+```
+
+  

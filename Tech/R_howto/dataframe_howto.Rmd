@@ -62,3 +62,32 @@ tabAll <- read.table(myfile, colClasses=classes, , header=TRUE)
 
 if (file.exists(myfile)) file.remove(myfile)
 ```
+
+### Remove NA values
+
+```{r}
+airquality[1:6, ]
+good <- complete.cases(airquality)
+airquality[good, ][1:6, ]
+```
+
+### Operations
+
+```{r}
+x <- matrix(1:4, 2,2); y <- matrix(rep(10,4), 2,2)
+x
+y
+
+x * y     # multiply corrosponding values 
+
+x %*% y   # matrix multiplication
+```
+
+### WHICH
+
+Use which() to subset the data. Don't forget the trailing (or leading) comma
+
+```{r}
+data3 <- airquality[ which(airquality$Ozone==41 & airquality$Wind == 7.4), ]
+data3
+```

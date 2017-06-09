@@ -33,11 +33,21 @@ close(con)
 
 These two are equiv
 ```{r}
-con <- file(myile, "r")
+con <- file(myfile, "r")
 data <- read.csv(con)
 close(con)
 # same as
 data <- read.csv(myfile)
+```
+
+### Determine column types
+
+```{r}
+
+initial <- read.table(myfile, nrows=100)
+classes <- sapply(initial, class)
+classes
+tabAll <- read.table(myfile, colClasses=classes)
 ```
 
 

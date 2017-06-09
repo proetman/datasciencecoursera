@@ -123,13 +123,26 @@ $(document).ready(function () {
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#data-frame"><span class="toc-section-number">0.1</span> Data Frame</a><ul>
+<li><a href="#convert-to-matrix"><span class="toc-section-number">0.1.1</span> convert to matrix</a></li>
+<li><a href="#dump-df"><span class="toc-section-number">0.1.2</span> Dump df</a></li>
+<li><a href="#write-df-to-csv"><span class="toc-section-number">0.1.3</span> Write DF to CSV</a></li>
+<li><a href="#remove-na-values"><span class="toc-section-number">0.1.4</span> Remove NA values</a></li>
+<li><a href="#operations"><span class="toc-section-number">0.1.5</span> Operations</a></li>
+<li><a href="#which"><span class="toc-section-number">0.1.6</span> WHICH</a></li>
+</ul></li>
+</ul>
+</div>
 
 <div id="data-frame" class="section level2">
-<h2>Data Frame</h2>
+<h2><span class="header-section-number">0.1</span> Data Frame</h2>
 <ul>
 <li>tabular data</li>
 <li>every element in col same, rows can be diff</li>
 <li>matrices all have to be same, df not</li>
+<li>read.table() and read.csv() create DF</li>
 </ul>
 <pre class="r"><code>my_df &lt;- data.frame(foo=1:4, bar=c(T,T,F,F))
 my_df</code></pre>
@@ -148,6 +161,97 @@ my_df</code></pre>
 ## 2    2  TRUE
 ## 3    3 FALSE
 ## 4    4 FALSE</code></pre>
+<div id="convert-to-matrix" class="section level3">
+<h3><span class="header-section-number">0.1.1</span> convert to matrix</h3>
+<p>use data.matrix() to convert df to matrix; will use forced coercion.</p>
+<pre class="r"><code>x &lt;- data.frame(foo=1:4, bar=c(T,T,F,F))
+x</code></pre>
+<pre><code>##   foo   bar
+## 1   1  TRUE
+## 2   2  TRUE
+## 3   3 FALSE
+## 4   4 FALSE</code></pre>
+<pre class="r"><code>data.matrix(x)</code></pre>
+<pre><code>##      foo bar
+## [1,]   1   1
+## [2,]   2   1
+## [3,]   3   0
+## [4,]   4   0</code></pre>
+</div>
+<div id="dump-df" class="section level3">
+<h3><span class="header-section-number">0.1.2</span> Dump df</h3>
+<pre class="r"><code>df &lt;- data.frame(a=1, b=2, c='a')
+dump(c('df'), file='dummy.csv')
+rm(df)
+source('dummy.csv')
+df</code></pre>
+<pre><code>##   a b c
+## 1 1 2 a</code></pre>
+</div>
+<div id="write-df-to-csv" class="section level3">
+<h3><span class="header-section-number">0.1.3</span> Write DF to CSV</h3>
+<pre class="r"><code>myfile &lt;- c('dummy.csv')
+df &lt;- data.frame(col1=1:6, col2=11:16, col3=sample(letters,6))
+write.csv(df, file=myfile, quote=FALSE)
+
+initial &lt;- read.table(myfile, nrows=3, header=TRUE)
+classes &lt;- sapply(initial, class)
+classes    # reports incorrect, should be NNNNNNCCC</code></pre>
+<pre><code>## X.col1.col2.col3 
+##         &quot;factor&quot;</code></pre>
+<pre class="r"><code>tabAll &lt;- read.table(myfile, colClasses=classes, , header=TRUE)
+
+if (file.exists(myfile)) file.remove(myfile)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="remove-na-values" class="section level3">
+<h3><span class="header-section-number">0.1.4</span> Remove NA values</h3>
+<pre class="r"><code>airquality[1:6, ]</code></pre>
+<pre><code>##   Ozone Solar.R Wind Temp Month Day
+## 1    41     190  7.4   67     5   1
+## 2    36     118  8.0   72     5   2
+## 3    12     149 12.6   74     5   3
+## 4    18     313 11.5   62     5   4
+## 5    NA      NA 14.3   56     5   5
+## 6    28      NA 14.9   66     5   6</code></pre>
+<pre class="r"><code>good &lt;- complete.cases(airquality)
+airquality[good, ][1:6, ]</code></pre>
+<pre><code>##   Ozone Solar.R Wind Temp Month Day
+## 1    41     190  7.4   67     5   1
+## 2    36     118  8.0   72     5   2
+## 3    12     149 12.6   74     5   3
+## 4    18     313 11.5   62     5   4
+## 7    23     299  8.6   65     5   7
+## 8    19      99 13.8   59     5   8</code></pre>
+</div>
+<div id="operations" class="section level3">
+<h3><span class="header-section-number">0.1.5</span> Operations</h3>
+<pre class="r"><code>x &lt;- matrix(1:4, 2,2); y &lt;- matrix(rep(10,4), 2,2)
+x</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4</code></pre>
+<pre class="r"><code>y</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   10   10
+## [2,]   10   10</code></pre>
+<pre class="r"><code>x * y     # multiply corrosponding values </code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   10   30
+## [2,]   20   40</code></pre>
+<pre class="r"><code>x %*% y   # matrix multiplication</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   40   40
+## [2,]   60   60</code></pre>
+</div>
+<div id="which" class="section level3">
+<h3><span class="header-section-number">0.1.6</span> WHICH</h3>
+<p>Use which() to subset the data. Don’t forget the trailing (or leading) comma</p>
+<pre class="r"><code>data3 &lt;- airquality[ which(airquality$Ozone==41 &amp; airquality$Wind == 7.4), ]
+data3</code></pre>
+<pre><code>##   Ozone Solar.R Wind Temp Month Day
+## 1    41     190  7.4   67     5   1</code></pre>
+</div>
 </div>
 
 

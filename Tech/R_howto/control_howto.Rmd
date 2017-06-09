@@ -1,0 +1,192 @@
+---
+title: "control Howto"
+author: "Paul roetman"
+date: "04 June 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+# Control Structures
+
+## IF
+
+if (condition) {
+    ## do something
+} 
+else if (other condition) {
+    ## do stuff
+} else {
+    ## do this if all else fails
+}
+
+
+```{r}
+x <- 2
+y <- if (x > 3) {
+        10
+     } else {
+        0
+     }
+y
+```
+
+
+## FOR
+
+```{r}
+for (i in 1:10) {
+    print(i)
+}
+
+x <- 1:5
+for (i in seq_along(x)) {
+    print(x[i])
+}
+
+x <- letters[1:5]
+for ( letter in x ) {
+    print(letter)
+}
+
+
+```
+
+## WHILE
+
+Randomly pick z until z out of the range of 3 and 10.
+
+```{r}
+z <- 5
+
+while ( z >= 3 && z <= 10) {
+    print(z)
+    count <- rbinom(1,1,0.5)
+
+    if (count == 1) {
+        z <- z + 1
+    } else {
+        z <- z - 1
+    }
+}
+
+```
+
+## REPEAT
+
+```{r}
+x <- 20
+
+repeat {
+    print(x)
+    if (x > 1) {
+        print('going to break as x > 1')
+        break
+    }
+}
+
+```
+
+## NEXT
+
+skip to next iteration.
+
+```{r}
+for (i in 1:15) {
+   if (i < 10) next
+    print(i)
+}
+
+```
+
+## FUNCTION
+
+Functions return the value from the LAST command
+
+```{r}
+add2 <- function(x,y) {
+  x + y
+}
+
+```
+
+Return a vector with 10 values:
+```{r}
+above10 <- function(x) {
+	use <- x > 10
+	x[use]
+}
+```
+### Function Definitions
+
+Functions are a first class object, treated like any other R object. They can be passed as objects to other functions.
+
+Can have named arguments.
+Can have default values for arguments.
+
+
+Formal Arguments args included in func def.
+The formals function returns list of all formal args of a function
+function args can be missing or may have default values
+
+args can be matched by position or by name
+
+when evaluating parameters, named args are extracted first, then any other parameters are treated by position. So if a named is first, it is extracted, then the remaining is treated as position 0.
+
+you can (and should) mix positional and named var. eg. args(lm)
+
+args can be partially matched (usually on command line). If there is a partial match that is uniq, it will use it.
+
+default val for a arg is NULL
+
+lazy Eval
+args of fuction only evaluated as required.
+If second arg is never used, even if not defaulted. does not matter
+
+```{r}
+f <- function(a,b) {
+    a^2
+}
+f(2)
+```
+Note - no errors.
+
+But this will create a warning
+
+f <- function(a,b) {
+	print(a)
+	print(b)
+}
+f(45)
+
+#### Special arg "..."
+variable number of args, usually passed on to other functions
+
+```{r}
+myplot <- function(x,y,type="1", ...) {
+    plot(x,y,type=type, ...)
+}
+```
+This will create your own plot arg, with the forced default of type=1. Any other arg is just "passed through"
+
+Also used in OO programming for generic functions. NFI what this means.
+eg
+    mean
+    function(x, .)
+    UseMethod("mean")
+
+
+Can also be used as the FIRST arg; where number of args up front can never be known - eg paste - you can paste together any amount of vars..
+
+```{r}
+args(paste) # function(..., sep=" ", collapse = NULL)
+```
+
+anything after ... must be named explicitly, and no partial matching.
+

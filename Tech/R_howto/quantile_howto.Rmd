@@ -1,0 +1,24 @@
+---
+title: "Quantile howto"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# quantile
+
+We need to know the value of 'count' that splits the data into the top 1% and bottom 99% of packages based on total downloads. In statistics, this is called the 0.99, or 99%, sample quantile. 
+
+In the below example, count is a continues var in a DF called pack_sum
+
+
+```{r}
+quantile(pack_sum$count, probs = 0.99)
+```

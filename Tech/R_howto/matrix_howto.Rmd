@@ -39,3 +39,21 @@ y <- 10:12
 cbind(x,y)
 rbind(x,y)
 ```
+
+### Reference matrix
+
+```{r}
+x <- matrix(1:6, 2,3)
+x
+
+```
+
+Extract single row
+```{r}
+x[1,]
+```
+
+Extract a matrix
+```{r}
+x[1,2, drop=FALSE]
+```

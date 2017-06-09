@@ -1,0 +1,46 @@
+---
+title: "dir_howto.Rmd"
+author: "Paul roetman"
+date: "04 June 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Directory commands
+
+```{r}
+dir.create('x')     # create a directory called x
+getwd()             # get current working dir
+setwd('x')          # change to the x dir
+
+file.create('x.R')  # create empty file called x.R
+file.exists('x.R')  # see if file exists
+file.info('x.R')    # info about a file - size, executable, isdir, mode (666), create and mod time.
+file.rename('x.R','x_new.R')       # rename a file
+file.copy('x_new.R','x_copied.R')  # copy file
+file.path('folder1','folder2')     # create platform independent path for f1/f2 
+
+list.files()        # list files in current working directory
+
+file.remove('x_new.R','x_copied.R','x.R')
+list.files()        # list files in current working directory
+
+if(file.exists('x.R'))file.remove('x.R')   # safer delete
+
+```
+
+cleanup
+
+```{r}
+# cleanup
+
+# setwd('..')
+unlink('x')
+getwd()
+```

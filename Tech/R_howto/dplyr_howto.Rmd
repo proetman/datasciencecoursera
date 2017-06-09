@@ -1,0 +1,118 @@
+---
+title: "dplry howto"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# dplyr
+
+## Load
+
+```{r}
+library(dplyr)
+```
+
+## Version
+
+```{r}
+packageVersion("dplyr")
+```
+
+## Covert to table format
+When printing, output much more informative and compact than standard df.
+
+```{r}
+library(reshape2)
+head(mtcars)
+cran <- tbl_df(mtcars)
+```
+
+## SELECT
+extract only the cols that we are interested in
+Note: cran not modified by this op, a new table is returned with the columns selected
+
+```{r}
+select(cran, cyl:hp)   # use range of columns
+select(cran, cyl, disp, qsec) # change order of cols and subset.
+select(cran, -carb)       # exclude col1
+```
+
+## FILTER
+extract by row
+
+```{r}
+filter(cran, cyl == 6)
+filter(cran, cyl == 6, disp==160.0)  # both filters must return true
+filter(cran, cyl == 6 | disp==108.0) # OR 
+filter(cran, !is.na(cyl))           # remove row where col1 is NA
+```
+
+## ARRANGE
+rows - order by 
+
+```{r}
+c2 <- arrange(cran, cyl)         # order by col1 
+c2 <- arrange(cran, desc(cyl))   # order by col1 desc
+c2 <- arrange(cran, cyl, disp)   # order by col1, then col2
+```
+
+## MUTATE
+add columns to table
+
+```{r}
+c3 <- mutate(cran, disp, size_mb = disp/2^20, size_g=size_mb/2^10)
+```
+
+# SUMMARIZE
+collapse dataset to a single row
+
+```{r}
+summarize(cran, avg_bytes=mean(disp))
+```
+
+
+## GROUP_BY
+summarize data by selection of group
+
+```{r}
+c4 <- group_by(cran, disp)    # this adds a "grouping" package to new table
+summarize(c4, mean(hp))       # return 1 row per group by col1, with mean(col44)
+
+pack_sum <- summarize(cran,
+                      count = n(),
+                      unique = n_distinct(cyl),
+                      count_of_types_of_cyl = n_distinct(unique),
+                      avg_bytes = mean(disp))
+```
+
+## CHAINING
+
+ piping commands together!
+```{r}
+
+result3 <-
+  cran %>%
+  group_by(cyl) %>%
+  summarize(count = n(),
+            unique = n_distinct(cyl),
+            count_of_types_of_cyl = n_distinct(unique),
+            avg_bytes = mean(disp)
+  ) %>%
+  filter(unique > 5) %>%
+  arrange(desc(cyl), avg_bytes)
+
+# Print result to console
+print(result3)
+```
+
+
+
+  

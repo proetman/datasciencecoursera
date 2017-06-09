@@ -1,0 +1,59 @@
+---
+title: "Subset Howto"
+author: "Paul roetman"
+date: "27 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Sequence
+
+Create sequence examples
+
+```{r}
+
+1:20                # create seq 1,2,..,20
+pi:10               # create seq 3.14, 4.14,..,9.14
+15:1                # create seq 15,14,..,1
+seq(0,10,by=0.5)    # create seq 0, 0.5, 1.0, ..,10.0
+seq(5,10,length=30) # create seq 5.0, 5.17, .. , 10 (30 values)
+x<-1:20; length(x)     # returns count of values in x
+seq(along.with=x)   # create seq same length as x
+
+```
+
+
+## REP
+Create sequence with the REP function
+
+```{r}
+rep(0, times=10)    # seq of 10 0's
+rep(c(0,1), times=10) # seq of 0,1,0,1,..,1  repeated 10 times
+rep(c(0,1), each=10) # seq of 0,0,..,1,1  each value rep 10 times
+```
+
+## PASTE
+
+sep between values of the first list, and all other paste var 
+collapse between values within paste command
+```{r}
+paste(c('a','b','c'),"zz", "yy")
+paste(c('a','b','c'),"zz", "yy", sep=',', collapse = ';')
+
+```
+
+## NORMAL DISTRIBUTION
+
+create a vector containing 10 draws from a standard normal distribution
+```{r}
+y <- rnorm(10)
+y
+y <- rnorm(10, 100)   # standard dev around 100
+y
+```
