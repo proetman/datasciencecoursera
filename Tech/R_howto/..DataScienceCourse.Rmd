@@ -18,6 +18,10 @@ Lecture Notes:
 
 https://github.com/DataScienceSpecialization/courses
 
+Thoughtfulblock: David Hood
+https://thoughtfulbloke.wordpress.com/2015/09/09/getting-and-cleaning-week-4/
+
+
 If a lecture has a bunch of links, get the link source from here.
 
 # Course 1
@@ -28,3 +32,10 @@ If a lecture has a bunch of links, get the link source from here.
 
 https://www.coursera.org/learn/data-cleaning/home/welcome
 
+Week 4: https://www.coursera.org/learn/data-cleaning/home/week/4
+
+
+
+
+Data Science Community
+https://www.coursera.org/learn/data-science-community/lecture/xx6ws/data-science-career-webinar-mcs-ds

@@ -75,17 +75,60 @@ julian(d2)
 
 ```{r}
 library(lubridate)
+help(package="lubridate")
 ymd("20140108")
 mdy("08/04/2014")
 dmy("01-jan-2014")
 ymd_hms("20140108 19:15:01")
 ymd_hms("20140108 19:15:01", tz="Pacific/Auckland")
+year(today())
+month(today())
+day(today())
+hour(now())
+minute(now())
+second(now())
+
+today()     # return todays date
+now()       # retunn date/time
 
 ```
 Display help for timezone....
 ```{r}
 ?Sys.timezone
 ```
+
+Update times
+```{r}
+this_moment <- now()
+this_moment
+new_time <- update(this_moment, hours = 8, minutes = 34, seconds = 55)
+this_moment
+new_time
+```
+
+## Date Arithmatic
+
+```{r}
+
+nyc <- now(tzone = "America/New_York")
+depart <- nyc + days(2)
+depart <- update(depart, hours = 17, minutes = 34)
+arrive <- depart + hours(15) + minutes(50)           # arrive in hk 15 hours later
+arrive <- with_tz(arrive, "Asia/Hong_Kong")
+last_time <- mdy("June 17, 2008", tz="Singapore")
+how_long <- interval(last_time, arrive)           # calc time diff
+as.period(how_long)   # display in human readable
+
+
+
+```
+
+## timing
+
+```{r}
+stopwatch()
+```
+
 
 ```{r}
 x = dmy(c("1jan1960", "2jan1972"))
@@ -99,5 +142,14 @@ http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubri
 lubridate vignette
 https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html
 ?POSIXlt
+
+Timezones:
+http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+Lubridate: 
+2011 Journal of Statistical Software paper titled 'Dates and Times Made Easy with lubridate'.
+Discussion of the 4 parts to dates in lubridate: instants, intervals, durations, and periods.
+
+
 
 

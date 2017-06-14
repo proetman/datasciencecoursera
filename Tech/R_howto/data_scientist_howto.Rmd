@@ -1,0 +1,41 @@
+---
+title: "data scientist Howto"
+author: "Paul roetman"
+date: "14 Jun 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Scientist
+
+
+data scientist (n.): Person who is better at statistics that any software engineer and better at software engineering than any statisticion!
+or
+Person employed to analyze and interpret complex digital data, such as the usage statistics of a website, espcially for business desictions.
+
+decision scientist  (Data scientist).
+  develop and test hypotheses key to product/business direction
+  uses methods
+    experimental design
+    statistical modeling
+machine learning engineer (Data scientist).
+  build data products powered by ML models
+  uses methods
+    ML
+    software engineering
+data infrastructure engineer.
+  build data infrastructure pipeline, develop analytic tooling.
+  uses methods
+    software engineering (ETL)
+    tool development
+business intelligence engineer.
+  build and develop data model, and tools to access it.
+  uses
+    data modelling
+    software engineering.

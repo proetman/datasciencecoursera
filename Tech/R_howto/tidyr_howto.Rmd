@@ -85,3 +85,6 @@ students3 %>%
 ```
 
   
+## Further Reading on Tidy Data
+
+* http://vita.had.co.nz/papers/tidy-data.pdf
