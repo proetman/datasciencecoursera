@@ -1,0 +1,30 @@
+---
+title: "Data Science Coursera howto"
+author: "Paul roetman"
+date: "30 May 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# General Links
+
+Lecture Notes:
+
+https://github.com/DataScienceSpecialization/courses
+
+If a lecture has a bunch of links, get the link source from here.
+
+# Course 1
+
+# Course 2
+
+# Course 3 - Getting and cleaning data
+
+https://www.coursera.org/learn/data-cleaning/home/welcome
+

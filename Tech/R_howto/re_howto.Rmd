@@ -1,0 +1,154 @@
+---
+title: "RE Howto (Regular Expression)"
+author: "Paul roetman"
+date: "13 Jun 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Regular Expressions
+
+* combination of literals and _metacharacters_
+* analagy with nateral language - literal text forms words, metachar define grammer.
+* re have rich set of metachar.
+
+define literal:
+
+* search for "exact" word
+
+## RE from the ground up.
+
+1. simplest - literals only. Match occurs if literal exists in text being tested.
+2. next - End in word, case insensitive: 
+
+## Metacharacters
+
+^          beginning of line
+$          end of line
+[]         classes of char
+               eg [Bb][Uu]  search for any combo of BU.
+^[Bb] dd   Line begins with B or b, then space, then dd
+[a-z]      match any lower case
+[a-zA-Z]   match any case char
+[0-9]      any number
+[^?.]$     any line that does _NOT_ end in either ? or .
+.          match any char
+               eg 9.11  search for 9 then anything then 11.
+\.         actual period, not wildcard.               
+|          OR
+               eg flood|fire    return any line with either flood or fire
+               
+### Combining MetaChar
+
+^[Gg]ood|[Bb]ad   any line begins with good or anywhere in line "bad", case insensitve on first char.
+^([Gg]ood|[Bb]ad)  same as above, but BOTH bad and good have to be at begin of line.
+?          optional
+              eg george (Ww\.)? bush  search for options W. in george bush name.
+              
+      not sure if these rules are correct, the () will group, not search.             
+(.*)       repeat 0 or more times, ie search for brackets with any char in between.
+           star is greedy, will match longest possible
+^s(.*?)s$  TURN OFF star greedyness.         
+(.+)       repeat 1 or more times, search for brackets with at least 1 char.
+[0-9]+ (.*)[0-9]+
+           search for at least 1 number, space, brackets with any char, then number.
+           lecture says brackets not relevent....
+
+
+```{r}
+
+search_str <- '[0-9]+ (.*)[0-9]+'
+#search_str <- '[0-9]*'
+str <- '99 abcd33'
+
+grep(search_str, str)
+
+```
+
+###Even more complex
+
+[Bb]ush( +[^ ]+ +){1,5} debate
+
+  starts with bush or Bush
+  
+  start
+        then at least 1 space
+        then anything that is not a space [^ ], at least once
+        then a space at least once
+  end, this repeated between 1 and 5 times
+      ie look for betwen 1 and 5 words!
+        
+  ends with debate
+  
+{} does counts
+m,n  at least m, not more than n
+m    exactly m matches
+m,   at least m
+
+### Matched text, repeated strings
+
+()   matched by number, reference \1, \2, etc
+
+ +([a-zA-Z]+) +\1 +
+ 
+    at least 1 space 
+    then at least 1 char 
+    followed by at least 1 space
+    followed by same search string again as (), string must be exactly same
+    followed by at least 1 space
+    
+```{r}
+search_str <- ' +([a-zA-Z]+) +\1 +'
+search_str <- ' +([a-z]+) +\\1 +'
+
+
+str <- ' aaabbb aaabbb '
+
+grep(search_str, str, value=TRUE)
+```
+    
+    
+
+
+
+## Grep
+
+```{r}
+if(!file.exists("./tmp")){dir.create("./tmp")}
+fileUrl <- "https://data.baltimorecity.gov/Transportation/Baltimore-Fixed-Speed-Cameras/dz54-2aru?accessType=DOWNLOAD"
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile="./tmp/cam.csv", method="curl")
+cameraData <- read.csv("./tmp/cam.csv")
+names(cameraData)
+
+file.remove("./tmp/cam.csv")
+unlink("./tmp")
+```
+
+
+
+```{r}
+
+names(cameraData) 
+grep("Alameda", cameraData$intersection)  # search for str in data, returns ID of found value
+grepl("Alameda", cameraData$intersection) # returns True False
+print("summarized table results!")
+table(grepl("Alameda", cameraData$intersection))  
+
+grep("Alameda", cameraData$intersection, value=TRUE)  # return values, not vector id
+grep("zzzzz", cameraData$intersection)    # returns 0 for not found
+length(grep("zzzzz", cameraData$intersection))  # len = 0 where nothing found
+
+```
+
+Remove rows that contain a value
+```{r}
+
+head(cameraData[!grepl("Alameda", cameraData$intersection),])
+```

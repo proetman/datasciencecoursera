@@ -1,0 +1,150 @@
+---
+title: "Strings Howto"
+author: "Paul roetman"
+date: "13 Jun 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# String Functions
+
+# Get Data set
+
+```{r}
+if(!file.exists("./tmp")){dir.create("./tmp")}
+fileUrl <- "https://data.baltimorecity.gov/Transportation/Baltimore-Fixed-Speed-Cameras/dz54-2aru?accessType=DOWNLOAD"
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile="./tmp/cam.csv", method="curl")
+cameraData <- read.csv("./tmp/cam.csv")
+names(cameraData)
+
+file.remove("./tmp/cam.csv")
+unlink("./tmp")
+```
+
+## Lower Case column names
+
+To remove typo's, name all columns lower case.
+
+```{r}
+names <- tolower(names(cameraData))
+names(cameraData)
+```
+
+Note: toupper also works.
+
+## strsplit
+
+Good for automagically splitting var names
+```{r}
+splitnames <- strsplit(names(cameraData), "\\.")
+splitnames[[5]]
+splitnames[[6]]
+```
+
+So, to tidy up the names
+
+```{r}
+splitnames <- strsplit(names(cameraData), "\\.")
+firstElement <- function(x){x[1]}
+newnames <- sapply(splitnames, firstElement)
+newnames
+names(cameraData) <- newnames
+```
+
+## Manipulate Variables
+Using the Peer Review Data
+
+```{r}
+if(!file.exists("./tmp")){dir.create("./tmp")}
+
+fileUrl <- "http://www.plosone.org/article/info:doi/10.1371/journal.pone.0026895"
+fileUrl1 <- "https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv"
+fileUrl2 <- "https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv"
+download.file(fileUrl1, destfile="./tmp/reviews.csv", method="curl")
+download.file(fileUrl2, destfile="./tmp/solutions.csv", method="curl")
+reviews <- read.csv("./tmp/reviews.csv")
+solutions <- read.csv("./tmp/solutions.csv")
+head(reviews,2)
+head(solutions,2)
+
+file.remove("./tmp/reviews.csv")
+file.remove("./tmp/solutions.csv")
+unlink("./tmp")
+```
+
+### Sub - Substitute characters
+
+substitute characters: from, to, source, ignore.case=FALSE, perl=FALSE, fixed=FALSE, useBytes=FALSE)
+
+Note: only will replace the first occurance. To replace multiple, use gsub
+
+example:
+```{r}
+names(reviews)
+sub("_", "", names(reviews),)
+```
+
+gsub example:
+```{r}
+x <- "this_is_a_long_name"
+gsub("_", "", x)
+```
+
+
+### GREP
+
+see re_howto.Rmd for more info!
+
+```{r}
+
+names(cameraData) 
+grep("Alameda", cameraData$intersection)  # search for str in data, returns ID of found value
+grepl("Alameda", cameraData$intersection) # returns True False
+print("summarized table results!")
+table(grepl("Alameda", cameraData$intersection))  
+
+grep("Alameda", cameraData$intersection, value=TRUE)  # return values, not vector id
+grep("zzzzz", cameraData$intersection)    # returns 0 for not found
+length(grep("zzzzz", cameraData$intersection))  # len = 0 where nothing found
+
+```
+
+Remove rows that contain a value
+```{r}
+
+head(cameraData[!grepl("Alameda", cameraData$intersection),])
+```
+
+## stringr
+handy string functions
+```{r}
+
+library(stringr)
+nchar("Jeffery Leek")
+substr("Jeffery Leek",6,7)   # first, last (not first, count)
+paste('aa','bb')    # default space seperator
+paste('a','b',sep='|')
+paste0('aa','bb')       # no sep.
+str_trim("  aa   ")       #trim leading and trailing strings.
+```
+
+## Notes
+
+Variable Names
+
+* lower case
+* descriptive (diagnosis, not dx)
+* not duplicated
+* no underscores or dots or white spaces  (??? why no underscores????)
+
+variables with char values
+
+* usually made into factor variables (depends on application)
+* should be descritive (MALE/FEMALE, not 0/1, T/F, M/F, etc)

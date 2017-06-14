@@ -1,0 +1,103 @@
+---
+title: "dates howto.Rmd"
+author: "Paul roetman"
+date: "13 Jun 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dates
+
+When dealing with dates, need to be in class "Date" or classes "POSIXct","POSIXlt""
+
+## Simple
+
+```{r}
+d1 <- date()        # "Tue Jun 13 20:32:24 2017"
+d1
+class(d1)           # Character
+```
+
+## Actual Dates
+
+```{r}
+d2 <- Sys.Date()   # "2017-06-13"
+d2   
+class(d2)          # Date
+```
+
+## Format dates
+
+* %d = day as number
+* %a = abbr weekday
+* %A = full weekday
+* %m = month number MM
+* %b = abbr month
+* %B = full month
+* %y = 2 digit year
+* %Y = 4 digit year
+
+```{r}
+format(d2, '%a %b %d')   # "Tue Jun 13"
+```
+
+## Cast string to date with format
+
+```{r}
+x <- c("1jan1960", "2jan1972")
+z <- as.Date(x, "%d%b%Y")
+z
+z[1] - z[2]
+as.numeric(z[1] - z[2])
+
+```
+
+## Convert to Julian
+
+Julian days is the number of days since the origin.
+
+```{r}
+weekdays(d2, abbreviate = FALSE)
+weekdays(d2, abbreviate = TRUE)
+months(d2,abbreviate = FALSE)
+months(d2,abbreviate = TRUE)
+
+julian(d2)
+```
+
+## Lubridate
+
+```{r}
+library(lubridate)
+ymd("20140108")
+mdy("08/04/2014")
+dmy("01-jan-2014")
+ymd_hms("20140108 19:15:01")
+ymd_hms("20140108 19:15:01", tz="Pacific/Auckland")
+
+```
+Display help for timezone....
+```{r}
+?Sys.timezone
+```
+
+```{r}
+x = dmy(c("1jan1960", "2jan1972"))
+x
+wday(x[1])
+wday(x[1], label=TRUE)
+```
+### Further Reading
+
+http://www.r-statistics.com/2012/03/do-more-with-dates-and-times-in-r-with-lubridate-1-1-0/
+lubridate vignette
+https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html
+?POSIXlt
+
+
