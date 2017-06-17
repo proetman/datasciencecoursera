@@ -127,12 +127,12 @@ handy string functions
 ```{r}
 
 library(stringr)
-nchar("Jeffery Leek")
+nchar("Jeffery Leek")        # number of characters
 substr("Jeffery Leek",6,7)   # first, last (not first, count)
-paste('aa','bb')    # default space seperator
-paste('a','b',sep='|')
-paste0('aa','bb')       # no sep.
-str_trim("  aa   ")       #trim leading and trailing strings.
+paste('aa','bb')             # default space seperator
+paste('a','b',sep='|')       # paste a|b
+paste0('aa','bb')            # no sep.
+str_trim("  aa   ")          # trim leading and trailing strings.
 ```
 
 ## Notes
