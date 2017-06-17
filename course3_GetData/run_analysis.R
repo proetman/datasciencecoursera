@@ -8,8 +8,7 @@ library(dplyr)
 #
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-dir_proj_working <- 'C:/work/R/datasciencecoursera/course3_GetData'
-dir_proj_data <- paste(dir_proj_working,'week4_data/UCI HAR Dataset', sep='/')
+dir_proj_data <- 'C:/temp/UCI HAR Dataset'
 tmp_dir <- 'c:/temp'
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -27,6 +26,103 @@ dir_set_default_working <- function(){
 }
 
 
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    Set Default Working Directory
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# Change directory to the global working directory defined for this project.
+
+load_data <- function(p_dir, p_activity_labels, p_col_all, p_col_required){
+
+        mode <- basename(p_dir)
+
+        subject_file <- paste(paste("subject", mode, sep="_"), 'txt', sep='.')
+        x_file <- paste(paste("x", mode, sep="_"), 'txt', sep='.')
+        y_file <- paste(paste("y", mode, sep="_"), 'txt', sep='.')
+
+        #  load subject test (who)
+        print(paste0('load subject file: ', subject_file))
+        subjects_file <- paste(p_dir, subject_file, sep='/')
+        subjects <- read.delim(subjects_file, header=FALSE)
+
+        #  load Y (what activity)
+        print(paste0('load Y file      : ', y_file))
+        activities_file <- paste(p_dir, y_file, sep='/')
+        activities <- read.delim(activities_file, header=FALSE)
+
+        #  load data (results)
+        print(paste0('load X file      : ', x_file))
+        field_widths <- rep(16, 561)
+        results_file <- paste(p_dir, x_file, sep='/')
+        results <- read.fwf(results_file, field_widths)
+
+        # Give proper names to columns
+        names(results) <- p_col_all
+
+        # Remove columns that are not required
+        results <- select(results, one_of(p_col_required))
+
+        # Add who did what
+        results$who <- subjects
+
+        # Add there activity
+        results$activity <- activities
+
+        # Add full name of there activity (not the code)
+        map <- setNames(p_activity_labels$activityname,
+                        p_activity_labels$activityid)
+
+        results$activity_full <- apply(results$activity,
+                                       2,
+                                       function(x) map[as.character(x)])
+
+        names(results)
+        results <- select(results, -activity)
+        names(results)
+        return(results)
+
+
+}
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    Load Activity lookup
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# Load the activity lookup
+
+load_activity_lookup <- function(p_dir, p_file) {
+
+        activity_labels_file <- paste(p_dir, p_file, sep='/')
+        activity_labels <- read.fwf(activity_labels_file, c(1,20))
+        names(activity_labels) <- c('activityid','activityname')
+
+        # remove leading and trailing spaces
+        activity_labels$activityname <- gsub(" ","", activity_labels$activityname)
+
+        return(activity_labels)
+}
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+#
+#                    Load Column Headings
+#
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# Load the column headings
+
+load_column_headings <- function(p_dir, p_file) {
+        data_file <- paste(p_dir, p_file, sep='/')
+        features <- read.delim(data_file, header=FALSE, sep=" ")
+        features$V2 <- gsub("[^[:alnum:]]", "", features$V2)
+
+        # Ensure every column will be unique by merging
+        # the column number with the column name
+
+        features$col <- paste(sep='_', features$V1, features$V2)
+
+        return(features$col)
+}
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 #
@@ -37,65 +133,43 @@ dir_set_default_working <- function(){
 
 run_analysis <- function() {
 
-        test_raw_dir <- paste(dir_proj_data, 'test', 'Inertial Signals', sep='/')
-        train_raw_dir <- paste(dir_proj_data, 'train', 'Inertial Signals', sep='/')
-
         test_dir <- paste(dir_proj_data, 'test', sep='/')
         train_dir <- paste(dir_proj_data, 'train', sep='/')
 
-        #  load 561 headings
-        features_file <- paste(dir_proj_data, "features.txt", sep='/')
-        features <- read.delim(features_file, header=FALSE, sep=" ")
-        features$V2 <- gsub("[^[:alnum:]]", "", features$V2)
-        features$col <- paste(sep='_', features$V1, features$V2)
+        # Load column headings from features.txt file
+        column_headings <- load_column_headings(dir_proj_data, "features.txt")
 
-        col_to_keep <- grep('mean|std', features$col, ignore.case = TRUE, value=TRUE)
-
-        #  load subject test (who)
-        subjects_file <- paste(test_dir, "subject_test.txt", sep='/')
-        subjects <- read.delim(subjects_file, header=FALSE)
-
-        #  load Y (what activity)
-        activities_file <- paste(test_dir, "y_test.txt", sep='/')
-        activities <- read.delim(activities_file, header=FALSE)
-
-        #  load data (results)
-        field_widths <- rep(16, 561)
-        results_file <- paste(test_dir, "x_test.txt", sep='/')
-        results <- read.fwf(results_file, field_widths)
+        # We only require columns with mean and standard deviation.
+        col_to_keep <- grep('mean|std',
+                            column_headings,
+                            ignore.case = TRUE,
+                            value=TRUE)
 
         # activity labels
-        activity_labels_file <- paste(dir_proj_data, "activity_labels.txt", sep='/')
-        activity_labels <- read.fwf(activity_labels_file, c(1,20))
-        names(activity_labels) <- c('activityid','activityname')
-        activity_labels$activityname <- gsub(" ","", activity_labels$activityname)
+        activity_labels <- load_activity_lookup(dir_proj_data,
+                                                "activity_labels.txt")
 
 
-        # Give proper names to columns
-        names(results) <- features$col
+        test_data <- load_data(test_dir,
+                               activity_labels,
+                               column_headings,
+                               col_to_keep)
 
-        # Remove columns that are not required
-        results <- select(results, one_of(col_to_keep))
-
-        # Add who did what
-        results$who <- subjects
-
-        # Add there activity
-        results$activity <- activities
-
-        # Add full name of there activity (not the code)
-        map <- setNames(activity_labels$activityname, activity_labels$activityid)
-        results$activity_full <- apply(results$activity, 2, function(x) map[as.character(x)])
+        train_data <- load_data(train_dir,
+                                activity_labels,
+                                column_headings,
+                                col_to_keep)
 
 
-        print('dim')
-        print(dim(results))
-        print(head(results,1))
-        # ames(results) <- list(features)
-        print('summarize')
-        print(summarize(results))
-        print('the end')
         if ( 1 == 0 ) {
+
+                print('dim')
+                print(dim(results))
+                print(head(results,1))
+                # ames(results) <- list(features)
+                print('summarize')
+                print(summarize(results))
+                print('the end')
                 files <- list.files(path = train_dir,
                                     pattern = '*.txt',
                                     recursive = FALSE)
