@@ -45,6 +45,7 @@ load_data <- function(p_dir, p_activity_labels, p_col_all, p_col_required){
         print(paste0('load subject file: ', subject_file))
         subjects_file <- paste(p_dir, subject_file, sep='/')
         subjects <- read.delim(subjects_file, header=FALSE)
+        names(subjects) <- c('Subject')
 
         #  load Y (what activity)
         print(paste0('load Y file      : ', y_file))
@@ -64,7 +65,9 @@ load_data <- function(p_dir, p_activity_labels, p_col_all, p_col_required){
         results <- select(results, one_of(p_col_required))
 
         # Add who did what
-        results$who <- subjects
+        results <- cbind(subjects, results)
+        print(names(results))
+        # results$who <- subjects
 
         # Add there activity
         results$activity <- activities
@@ -160,33 +163,13 @@ run_analysis <- function() {
                                 column_headings,
                                 col_to_keep)
 
+        merged_data <- rbind(train_data, test_data)
 
-        if ( 1 == 0 ) {
+        myresult <- merged_data %>%
+                    group_by(Subject, activity_full) %>%
+                    summarise_each(funs(mean(.)))
 
-                print('dim')
-                print(dim(results))
-                print(head(results,1))
-                # ames(results) <- list(features)
-                print('summarize')
-                print(summarize(results))
-                print('the end')
-                files <- list.files(path = train_dir,
-                                    pattern = '*.txt',
-                                    recursive = FALSE)
-
-                field_widths <- rep(16, 128)
-                for (f in files) {
-                        curr_file <- paste(train_dir, f, sep='/')
-                        print_val <- gsub("/","\\\\", curr_file)
-                        print(print_val)
-                        f_data <- read.fwf(curr_file, field_widths)
-                        # names(f_data) <- features
-                        print(dim(f_data))
-                        break
-                }
-
-        }
-
+        print(dim(myresult))
 
 
 }
