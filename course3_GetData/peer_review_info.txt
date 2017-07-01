@@ -1,0 +1,41 @@
+
+rm(list=ls())
+data <- read.table('C:/Temp/review1/tidydata.txt', sep=" ", header=TRUE)
+data <- read.table('C:/Temp/review2/tidydata_orig.txt', sep=" ", header=TRUE)
+
+dim(data)
+names(data)
+
+Hi
+The data set is nearly tidy, but missed the requirement that no columns should have abbreviations in it.
+The code book should also list every column, and what type of data that column contains.
+
+Hi
+The data set is nearly tidy, but missed the requirement that no columns should have abbreviations or punctuation in it.
+While the code book does list each column, it gives no information about the columns. 
+
+Hi
+The data set is nearly tidy, but missed the requirement that no columns should have abbreviations or punctuation in it.
+While the code book does list each column, it gives no information about the columns. Also, columns that did not have mean or STD should have been removed (only 88 columns should remain).
+In the program run_analysis, code should not exceed 80 characters per line, and indentation is recommended to be 8 characters.
+
+
+
+
+https://github.com/kartikp1993/ProgrammingAssignment3.git
+https://github.com/kartikp1993/ProgrammingAssignment3.git
+https://github.com/kartikp1993/ProgrammingAssignment3.git
+
+https://github.com/belliott71/getting-cleaning-data
+
+
+
+There were 50 or more warnings (use warnings() to see the first 50)
+> warnings()
+Warning messages:
+1: In mean.default(newX[, i], ...) :
+  argument is not numeric or logical: returning NA
+2: In mean.default(newX[, i], ...) :
+  argument is not numeric or logical: returning NA
+3: In mean.default(newX[, i], ...) :
+  argument is not numeric or logical: returning NA

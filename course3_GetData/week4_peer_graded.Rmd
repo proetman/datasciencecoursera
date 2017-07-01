@@ -34,3 +34,13 @@ ToDo:
 
 * Merge train and test
 * get mean and standard deviation for each measurement
+
+
+codeBook.md
+        describes the variables, 
+        the data, 
+        and any transformations or work that you performed to clean up the data 
+
+README.md
+        explains how all of the scripts work and 
+        how they are connected.
