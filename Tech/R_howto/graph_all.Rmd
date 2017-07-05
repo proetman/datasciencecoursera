@@ -1,0 +1,54 @@
+---
+title: "Graphing - all"
+author: "Paul roetman"
+date: "03 July 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# All graphs
+
+## Print to file
+
+```{r}
+
+pollution <- read.csv('C:/work/R/datasciencecoursera/Course4_ExploreData/Week1/avgpm25.csv', colClasses = c('numeric','character','factor','numeric','numeric'))
+head(pollution)
+
+```
+
+## Example points
+
+
+Display all types of points, runs a graphic program when not run in Rmd files.
+
+```{r}
+example(points)
+```
+
+## Different file types
+
+pdf: line type graphics, resizes well, portable, not efficient if plot has many objects/points.
+
+svg: XML bases scalable vector graphics - supports animation and interactivity - useful for web based plots
+
+win.metafile: windows meta file
+
+postscript: older format, resizes well, portable, create encapsulated postscript files. Windows does not have postscript viewer (but may be able to print)
+
+## bitmap file types
+
+png: bitmapped format, good for line drawings or images with solid colours. Uses lossless compression
+
+jpg: good for photo and natural scenes, uses lossy compression. Good for plotting many many points, does not resize well.
+
+tiff: creates bitmap image in TIFF format, supports lossless compression (older)
+
+bmp: native windows bitmap format.

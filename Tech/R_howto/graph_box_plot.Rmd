@@ -1,0 +1,54 @@
+---
+title: "Graphing - Box Plot"
+author: "Paul roetman"
+date: "02 July 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Box Plot
+
+Looks like there are a bunch of graphics parameters that can be added to each graph, see http://stat.ethz.ch/R-manual/R-devel/library/graphics/html/par.html
+
+## Load Data to plot
+```{r}
+
+pollution <- read.csv('C:/work/R/datasciencecoursera/Course4_ExploreData/Week1/avgpm25.csv', colClasses = c('numeric','character','factor','numeric','numeric'))
+head(pollution)
+
+```
+
+## Box Plot
+
+```{r}
+boxplot(pollution$pm25, col = "blue")
+```
+
+# box plot with overlay
+
+```{r}
+boxplot(pollution$pm25, col = "blue")
+abline(h=12)
+```
+
+## Multiple Box Plots
+
+```{r}
+boxplot(pm25 ~ region, data=pollution, col = "red")
+```
+
+## Box plot from Base system
+
+```{r}
+library(datasets)
+airquality <- transform(airquality, Month = factor(Month))
+boxplot(Ozone ~ Month, airquality, xlab = "Month", ylab = "Ozone (ppd)")
+```
+

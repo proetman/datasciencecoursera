@@ -1,0 +1,30 @@
+---
+title: "summary"
+author: "Paul roetman"
+date: "02 July 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Box Plot
+
+## Load Data to plot
+```{r}
+
+pollution <- read.csv('C:/work/R/datasciencecoursera/Course4_ExploreData/Week1/avgpm25.csv', colClasses = c('numeric','character','factor','numeric','numeric'))
+head(pollution)
+
+```
+
+```{r}
+summary(pollution$pm25)
+```
+
+

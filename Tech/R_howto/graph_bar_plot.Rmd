@@ -1,0 +1,49 @@
+---
+title: "Graphing - Bar Plot"
+author: "Paul roetman"
+date: "02 July 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Bar Plot
+
+Looks like there are a bunch of graphics parameters that can be added to each graph, see http://stat.ethz.ch/R-manual/R-devel/library/graphics/html/par.html
+
+## Load Data to plot
+```{r}
+
+pollution <- read.csv('C:/work/R/datasciencecoursera/Course4_ExploreData/Week1/avgpm25.csv', colClasses = c('numeric','character','factor','numeric','numeric'))
+head(pollution)
+
+```
+
+## Bar Plot
+
+```{r}
+barplot(table(pollution$region), col = "wheat", main="Number of counties in each region")
+```
+
+## Bar Plot from ggplot2
+
+### Facets (or panels)
+
+for facets= a ~ b
+a determines columns
+b determines rows
+
+we do drv ~ .   so have a column of graphs
+
+```{r}
+library(ggplot2)
+data(mpg)
+qplot(hwy, data=mpg, facets=drv ~ ., binwidth=2)
+```
+
