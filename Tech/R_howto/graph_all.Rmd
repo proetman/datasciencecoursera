@@ -24,6 +24,26 @@ head(pollution)
 
 ```
 
+## Colours
+
+from grDevices
+
+heat.colors    # low values red, moves through to white (as real fire does)
+topo.colors    # blue (low) through green to brown (high)
+colorRamp
+  pal <- colorRamp(c("red", "blue"))
+  pal(seq(0,1,len=6))
+  pal(0)
+colorRampPalette
+  p1 <- colorRampPalette(c("red","blue"))
+  p1(2)
+  p1(6)
+
+colorBrewer
+  cols <- brewer.pal(3,"BuGn")
+
+
+
 ## Example points
 
 

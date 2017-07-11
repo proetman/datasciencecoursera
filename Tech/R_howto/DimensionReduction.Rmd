@@ -1,0 +1,109 @@
+---
+title: "Dimension Reduction Howto"
+author: "Paul roetman"
+date: "11 July 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+# Dimension Reduction
+
+```{r}
+set.seed(12345)
+par(mar=rep(0.2, 4)) 
+dataMatrix <- matrix(rnorm(400), nrow=40)
+image(1:10, 1:40, t(dataMatrix)[,nrow(dataMatrix):1])
+
+```
+
+Note: no pattern emerges, as there is no pattern to the data!
+```{r}
+heatmap(dataMatrix)
+```
+Add Pattern, can see that the left half is more red, right more yellow
+on right, mean of 3
+on left, mean of 0
+
+```{r}
+set.seed(678910)
+for (i in 1:40) {
+        # flip a coin
+        coinFlip <- rbinom(1, size=1, prob=0.5)
+        # if heads, add a common pattern to that row
+        if (coinFlip){
+                dataMatrix[i, ] <- dataMatrix[i,] + rep(c(0,3), each = 5)
+        }
+}
+par(mar=rep(0.2, 4))
+image(1:10, 1:40, t(dataMatrix)[, nrow(dataMatrix):1])
+```
+
+Now run hierarchical analysis
+can see definate clusters on right/left, this shows in heat map.
+in rows, not so much, still pretty random.
+
+```{r}
+
+par(mar=rep(0.2, 4)) 
+heatmap(dataMatrix)
+```
+
+## Patterns in rows and columns
+
+```{r}
+hh <- hclust(dist(dataMatrix))
+hh
+dataMatrixOrdered <- dataMatrix[hh$order,]
+par(mfrow = c(1,3))
+image(t(dataMatrixOrdered)[, nrow(dataMatrixOrdered):1])
+plot(rowMeans(dataMatrixOrdered), 40:1, , xlab="Row Mean", ylab="row", pch=19)
+plot(colMeans(dataMatrixOrdered), xlab="Column", ylab="ColMeans", pch=19)
+```
+
+## Related Problems
+
+You have multivariate variables X1, X2, ... , Xn. To simplify, X1 = (X11, X27, X321), X2 = ...
+
+* find new set of multivariate variables that are uncorrolated, but still explain as much variance as possible (basically same as orig). For example, height and weight are corrolated, so they can probably be lumped together; whereas height and hair colour cannot.
+
+* if put all variables together in one matrix, find best matrix created with fewer variables (lower rank) that explains the original data.
+
+First goal is _statistical_ (often solved by principle componants analysis).
+Second goal is _data compression_ (often solved by singular value decomposition)
+
+## SVD - singular value decomposition
+
+If X is matrix, each var in col, each obs in row, then SVD is matrix decomposition.
+        X = UDV^T^
+  where the col of U are orthoganl (left singular vectors)
+  the col of V are orthogonal (right singular vectors)
+  and D is a diagonal matrix (singular values)
+  
+  
+## PCA - principle componants analysis
+
+The principal components are equal to the right singular values if you first scale (subtract mean, divide by standard deviation) the variables; then run SVD on the result, end up with V.
+        
+Components of SVD - _u_ and _v_
+
+```{r}
+svd1 <- svd(scale(dataMatrixOrdered))
+par(mfrow = c(1,3))
+image(t(dataMatrixOrdered)[,nrow(dataMatrixOrdered):1])
+plot(svd1$u[,1], 40:1, , xlab="Row", ylab="First Left Singular vector", pch=19)
+plot(svd1$v[,1], xlab="Column", ylab="First Right Singular vector", pch=19)
+
+```
+
+```{r}
+str(dataMatrixOrdered)
+head(dataMatrixOrdered)
+scale(dataMatrixOrdered)
+```
