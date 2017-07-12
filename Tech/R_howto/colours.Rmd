@@ -1,0 +1,141 @@
+---
+title: "Colour Howto"
+author: "Paul roetman"
+date: "11 July 2017"
+output: 
+  html_document:
+    toc: TRUE
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+Judisious use of colour in plots that you are trying to demonstrate can help 
+various dimensions "come out" better
+
+* default colours in R are crap.
+* recent developments in colours in plots/graphs/etc.
+* functions in R and in external packages that are very handy.
+
+Here is an example of a very bad plot.
+
+col = 1 ==> black
+col = 2 ==> red
+col = 3 ==> green.
+
+```{r}
+
+x <- rnorm(20)
+y <- rnorm(20)
+df <- data.frame(x=x, y=y)
+head(df)
+
+plot(df, col=c(1,2,3), pch=c(19, 20, 21))
+```
+
+
+heat.colors(x) ranges from red (low), through yellow to white (high).
+   fire ranges from red through yellow to white.
+topo.colors() ranges from blue through green to yellow to white/cyan.
+  blue low, green higher, etc.
+
+```{r}
+heat.colors(2)
+topo.colors(2)
+```
+
+## Colour Utilities in R
+
+* *grDevices* package has 2 func
+** colorRamp
+** colorRampPalette
+* both take palettes of colors and help to interpolate between the colors. It kinda blends between the colours.
+* *colors()* list names of colours you can use in any plotting function. About 650 of them.
+
+```{r}
+head(colors())
+tail(colors())
+```
+
+### Colour Palette
+
+* *colorRamp* take a palette of colours, and return a function that takes values between 0 and 1, indicating extremes of the colour palette - similar to the *gray* function which does the same for black to white.
+
+return values are a 3 vector of Red Green Blue (RGB)
+```{r}
+pal <- colorRamp(c("red","blue"))
+pal(0)     # red  - one end of the avaialble palette
+pal(1)     # blue - other end 
+pal(0.5)   # 1/2 red, 1/2 blue -- green!
+pal(0.25)  # more red than blue
+
+pal(seq(0,1, len=10))  # fading from red to blue over 10 iterations.
+```
+
+
+* *colorRampPalette* take a palette of colours and return a func that takes an integer arg and returns a vector of colours, interpolating the palette (like heat.colors() and topo.colors())
+
+Still has RGB, but in Hex format.
+
+```{r}
+pal2 <- colorRampPalette(c("red", "yellow"))
+pal2(2)
+print('now select 10, ranging from red to yellow')
+pal2(10)
+```
+
+
+## RColorBrewer Package
+
+* one package on CRAN that contains interesting/useful color palettes
+* 3 types of palettes
+** Sequential
+** Diverging
+** Qualitative   (not ordered, factors, or categorical)
+* Palette info can be used in conjunction with colorRamp() and colorRampPalette()
+
+Colours available:
+Top Set: sequential, ordered
+middle set: Qualitative: categorical, colours have no relation; but do have a theme.
+last set: diverging: 
+
+```{r}
+library(RColorBrewer)
+cols <- brewer.pal(3, "BuGn")
+cols
+pal <- colorRampPalette(cols)
+image(volcano, col=pal(20))
+```
+
+## SmoothScatter
+
+scatter plot of a lot of points (eg 10,000 points).
+creates a 2d histogram of points, and plots that.
+defaults dark blue to lighter blue.
+
+```{r}
+x <- rnorm(10000)
+y <- rnorm(10000)
+smoothScatter(x,y)
+```
+
+
+## Other Functions
+
+* *rgb* functions produces color via Red Green Blue proportions.
+* Colour tranpency added via *alpha* parameter to rgb
+* *colorspace* package used for different control over colors.
+
+
+### alpha example
+
+```{r}
+x <- rnorm(1000)
+y <- rnorm(1000)
+
+plot(x,y, col=rgb(0,0,0,1), pch=19)
+
+```

@@ -190,3 +190,23 @@ args(paste) # function(..., sep=" ", collapse = NULL)
 
 anything after ... must be named explicitly, and no partial matching.
 
+## Try Catch
+
+Note: string "After run open" is never executed.
+
+```{r}
+# Next command will generate an error
+tryCatch({
+  print('run open')
+  open('sdfasdfasdf', 'r')
+  print('After run open')
+
+}, warning = function(war) {
+        print(paste("WARNING RAISED:", war))
+}, error = function(err) {
+        print(paste("ERROR RAISED:", err))
+})
+print('after try catch')
+```
+
+the end.
