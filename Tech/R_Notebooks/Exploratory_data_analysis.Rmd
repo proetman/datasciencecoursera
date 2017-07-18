@@ -1,0 +1,69 @@
+---
+title: "Exploratory Notebook - Clustering Case Study"
+output: html_notebook
+---
+
+# Case study of Clustering
+
+Note: When looking at the data, thing to always remember is "what is the question", only explore avenues that head down the path to the answer to "the question". Sense of what you are looking for, and what are the key priorities; what do you want to get out of your dataset. Rules out certain questions, takes you to the next step.
+
+This will generate a rough cut of the "final draft"
+
+This case study is using smart phones to predict human activity.
+
+Data downloaded from : [UCI Website](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones) and raw data from [raw data](http://archive.ics.uci.edu/ml/machine-learning-databases/00240/).
+
+Download locally to c:\temp\UCI; and unzip.
+
+Need to manipulate the data to get to a format that is usable.
+
+```{r}
+raw_data <- "C:/Temp/UCI/UCI HAR Dataset/train"
+subjects_file <- paste(raw_data, "subject_train.txt", sep="/")
+x_file <- paste(raw_data, "X_train.txt", sep="/")
+y_file <- paste(raw_data, "y_train.txt", sep="/")
+
+subjects <- read.delim(subjects_file, header=FALSE)
+activities <- read.delim(y_file, header=FALSE)
+data <- read.fwf(x_file, rep(16, 561))
+```
+
+Grab the column headings from the features.txt file and format them.
+```{r}
+features_file <- "C:/Temp/UCI/UCI HAR Dataset/features.txt"
+features <- read.delim(features_file, header=FALSE, sep=" ")
+features$V2 <- gsub("[^[:alnum:]]", "", features$V2)
+features$col <- paste(sep='_', features$V1, features$V2)
+features_headings <- features$col
+```
+Generate Activity Labels (eg: translate 1 -> walking)
+```{r}
+activity_labels_file <- "C:/Temp/UCI/UCI HAR Dataset/activity_labels.txt"
+activity_labels <- read.fwf(activity_labels_file, c(1,20))
+names(activity_labels) <- c('activityid','activityname')
+# remove leading and trailing spaces
+activity_labels$activityname <- gsub(" ", "",
+                                     activity_labels$activityname)
+map <- setNames(activity_labels$activityname,
+                activity_labels$activityid)
+```
+
+
+Tidy up data a bit
+
+```{r}
+names(data) <- features_headings
+final_data <- cbind(subjects, data)
+final_data$activity <- activities
+final_data$activity_full <- apply(final_data$activity, 2,
+                                  function(x) map[as.character(x)])
+
+```
+
+Display the first set of columns interested in, and the break down of the activities done.
+
+```{r}
+names(final_data[2:13])
+table(final_data$activity_full)
+```
+

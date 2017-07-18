@@ -84,3 +84,5 @@ dataMatrix <- as.matrix(dataFrame)[sample(1:12), ]
 heatmap(dataMatrix)
 ```
 
+good tutorial on heat maps: http://sebastianraschka.com/Articles/heatmaps_in_r.html#clustering
+

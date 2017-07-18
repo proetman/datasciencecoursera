@@ -289,6 +289,12 @@ Summarise data with smaller number of features, SVD can be used.
 
 
 
+Principal Component Analysis, "a simple, non-parametric method for extracting relevant information
+| from confusing data sets." We're quoting here from a very nice concise paper on this subject which can be found at
+| http://arxiv.org/pdf/1404.1100.pdf. The paper by Jonathon Shlens of Google Research is called, A Tutorial on Principal Component
+| Analysis.
+
+
 
 
 

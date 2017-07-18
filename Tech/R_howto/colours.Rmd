@@ -132,10 +132,20 @@ smoothScatter(x,y)
 
 ### alpha example
 
+first plot the info is lost in the centre of the diagram, just a blob.
+Second plot info is not lost. can see the more dense regions within the centre.
+0.2 is pretty close to zero, so very transperant.
+
 ```{r}
 x <- rnorm(1000)
 y <- rnorm(1000)
-
+par(mfrow=c(1,2))
 plot(x,y, col=rgb(0,0,0,1), pch=19)
-
+plot(x,y, col=rgb(0,0,0,0.2), pch=19)
 ```
+
+## Summary
+
+* careful use of colour in plots/maps/etc make eisier for reader to get what you are trying to say.
+* transparency is your friend.
+

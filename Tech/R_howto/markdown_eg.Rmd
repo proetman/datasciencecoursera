@@ -50,3 +50,12 @@ print('even more text')
 i) stuf
 (@) numbered list
 (@) numbered list
+
+
+## Syntax shortcuts: 
+
+hyperlink: [R Markdown](http://rmarkdown.rstudio.com) 
+Run Code: ^ Shift Enter
+Insert R: ^ Alt I
+Preview: ^ shift K
+
