@@ -1,0 +1,271 @@
+---
+title: "Air Pollution Case Study"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+## Question
+
+What is the question?
+
+Are air pollution levels now lower than in 1999. (now = 2012)
+
+## Data Set
+from US EPA - air pollution data, in particular fine particulate matter (dust).
+FM 2.5 may affect people lungs (asthma, etc)
+
+I did not download the full set from the site, just did NY state only.
+
+## Load CSV
+
+```{r}
+rm(list=ls())
+data99 <- read.csv(file='c:/temp/AQ/ad_viz_plotval_data_1999.csv')
+data12 <- read.csv(file='c:/temp/AQ/ad_viz_plotval_data_2012.csv')
+# str(data99)
+# # display a value with NA to check it has loaded correctly.
+# data99[444,]
+names(data99) <- make.names(names(data99), unique=TRUE)
+names(data12) <- make.names(names(data12), unique=TRUE)
+head(data99)
+```
+
+If column names were not loaded....
+
+```{r}
+cnames <- readLines('c:/temp/AQ/ad_viz_plotval_data_1999.csv',1)
+cnames <- gsub('"',"", cnames)
+cnames <- strsplit(cnames, ",", fixed=TRUE)
+# cnames is a list of lists, so only need the first element.
+# if we needed to load column headers could do this:
+# names(data99) <- cnames[[1]]
+
+```
+
+## Look at PM2.5 data
+
+```{r}
+x0_99 <- data99$DAILY_AQI_VALUE
+class(x0_99)
+str(x0_99)
+summary(x0_99)
+# If there were missing values, this would give you the percentage
+mean(is.na(x0_99))
+```
+
+It's interesting that there are no missing values...so the data must have been "cleaned" already.
+
+in the raw data, for all of USA, there are 11% of values missing.
+
+Missing values can play a different role depending on the question. For some questions, it will not matter, for others, it will be critical.
+
+The download I used was for pm2.5 only, so the missing values were probably discarded.
+
+```{r}
+x0_12 <- data12$DAILY_AQI_VALUE
+class(x0_12)
+str(x0_12)
+summary(x0_12)
+# If there were missing values, this would give you the percentage
+mean(is.na(x0_12))
+```
+
+Note: there are lots more obs in 2012 than in 1999 - more air poll monitoring stations have  been created.
+
+## Compare
+
+```{r}
+summary(x0_99)
+summary(x0_12)
+```
+
+## first look at data
+
+```{r}
+boxplot(x0_99, x0_12)
+```
+
+in whole country box plot not usable, so try log
+
+```{r}
+boxplot(log10(x0_99), log10(x0_12))
+```
+
+In whole country data, there are some negative values - which will be dud readings. In my data, there are a bunch of zero's that do not plot...will look at the zero's instead of the neg (as I have no neg)
+
+## Zero values
+
+Create logical vector of zero values
+```{r}
+zero_val_99 <- x0_99 == 0
+sum(zero_val_99, na.rm=TRUE)
+mean(zero_val_99, na.rm=TRUE)
+zero_val_12 <- x0_12 == 0
+sum(zero_val_12, na.rm=TRUE)
+mean(zero_val_12, na.rm=TRUE)
+
+```
+
+So the proportion of zero values is 0.06% and 0.4% - not much.
+
+May need to investigate when the zero values occur (or neg val occur), is it a time of the year
+```{r}
+dates_99 <- data99$Date
+str(dates_99)
+dates_99 <- as.Date(as.character(dates_99), "%m/%d/%Y")
+str(dates_99)
+hist(dates_99, "month")
+hist(dates_99[zero_val_99], "month")
+```
+
+```{r}
+dates_12 <- data12$Date
+str(dates_12)
+dates_12 <- as.Date(as.character(dates_12), "%m/%d/%Y")
+str(dates_12)
+hist(dates_12, "month")
+hist(dates_12[zero_val_12], "month")
+```
+
+
+# NEW YORK ONLY
+
+In the lecture, they subset the data to look at NY only now.
+
+```{r}
+site0_99 <- unique(subset(data99, STATE_CODE==36, c(COUNTY_CODE, AQS_SITE_ID)))
+
+site0_12 <- unique(subset(data12, STATE_CODE==36, c(COUNTY_CODE, AQS_SITE_ID)))
+
+# Now merge the two columns together - county.site_id
+
+
+
+site0_99 <- paste(site0_99[,1], site0_99[,2], sep=".")
+site0_12 <- paste(site0_12[,1], site0_12[,2], sep=".")
+
+
+site0_99
+site0_12
+```
+
+Which are common to both sets
+
+```{r}
+both <- intersect(site0_99,site0_12 )
+both
+```
+
+Now count obs per site.county
+
+```{r}
+
+data99$county.site <- with(data99, paste(COUNTY_CODE,AQS_SITE_ID, sep="."))
+data12$county.site <- with(data12, paste(COUNTY_CODE,AQS_SITE_ID, sep="."))
+
+#now count the val
+
+cnt99 <- subset(data99, STATE_CODE==36 & county.site %in% both)
+cnt12 <- subset(data12, STATE_CODE==36 & county.site %in% both)
+```
+
+```{r}
+sapply(split(cnt99,cnt99$county.site), nrow)
+sapply(split(cnt12,cnt12$county.site), nrow)
+```
+
+pick (for no particular reason) 63.360632008
+
+```{r}
+pm99sub <- subset(cnt99, STATE_CODE==36 & county.site == "63.360632008")
+pm12sum <- subset(cnt12, STATE_CODE==36 & county.site == "63.360632008")
+```
+
+Obs in pm99sub = 92, pm12sub = 416
+
+## Plot Start of results
+
+Plot the data as a function of time.
+time on x axis, pm2.5 on y axis
+
+This will visualize if the levels have gone down.
+
+timeseries
+```{r}
+dates_pm99sub <- pm99sub$Date
+dates_pm99sub <- as.Date(as.character(dates_pm99sub), "%m/%d/%Y")
+x1_pm99sub <- pm99sub$Daily.Mean.PM2.5.Concentration
+plot(dates_pm99sub, x1_pm99sub)
+```
+```{r}
+dates_pm12sub <- pm12sum$Date
+dates_pm12sub <- as.Date(as.character(dates_pm12sub), "%m/%d/%Y")
+x1_pm12sub <- pm12sum$Daily.Mean.PM2.5.Concentration
+plot(dates_pm12sub, x1_pm12sub)
+```
+
+
+Hard to view sperately, so join.
+
+```{r}
+par(mfrow = c(1,2), mar = (c(4,4,2,1)))
+plot(dates_pm99sub, x1_pm99sub, pch=20)
+abline(h=median(x1_pm99sub))
+plot(dates_pm12sub, x1_pm12sub, pch=20)
+abline(h=median(x1_pm12sub))
+
+```
+
+The abline on the second graph is higher than first, very misleading, as the scale is different. First is above 10, second is below 10.
+
+Todo this, calculate the range of the X data.
+
+```{r}
+rng <- range(x1_pm99sub, x1_pm12sub, na.rm=T)
+```
+
+```{r}
+par(mfrow = c(1,2), mar = (c(4,4,2,1)))
+plot(dates_pm99sub, x1_pm99sub, pch=20, ylim=rng)
+abline(h=median(x1_pm99sub))
+plot(dates_pm12sub, x1_pm12sub, pch=20, ylim=rng)
+abline(h=median(x1_pm12sub))
+```
+
+## look at just aveage by state now.
+
+Well, I cannot do that, as I only have one states data...will do it by county instead.
+
+Plot the average by county in 99, and again in 12, then connect the dots.
+
+```{r}
+mn99 <- with(data99, tapply(Daily.Mean.PM2.5.Concentration, COUNTY_CODE, mean))
+summary(mn99)
+
+mn12 <- with(data12, tapply(Daily.Mean.PM2.5.Concentration, COUNTY_CODE, mean))
+
+summary(mn12)
+```
+
+Now put that into a dataframe
+
+```{r}
+df99 <- data.frame(state=names(mn99), mean=mn99)
+df12 <- data.frame(state=names(mn12), mean=mn12)
+
+mrg <- merge(df99, df12, by="state")
+head(mrg)
+```
+
+now plot it.
+
+```{r}
+par(mfrow=c(1,1))
+with(mrg, plot(rep(1999, 16 ), mrg[,2], xlim=c(1998, 2013) ))
+with(mrg, points(rep(2012, 16 ), mrg[,3]))
+segments(rep(1999, 16), mrg[,2], rep(2012, 16), mrg[,3])
+
+```
+
+

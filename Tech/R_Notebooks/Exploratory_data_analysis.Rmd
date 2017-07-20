@@ -67,3 +67,147 @@ names(final_data[2:13])
 table(final_data$activity_full)
 ```
 
+Plot average acceleration for the first subject. For rest of case study, going to ingore all other subjects and focus on subject 1
+
+```{r}
+par(mfrow=c(1,2), mar=c(5,4,1,1))
+final_data <- transform(final_data, activity_full=factor(activity_full))
+sub1 <- subset(final_data, V1==1)
+plot(sub1[,2], col=sub1$activity_full, ylab=names(sub1)[2])
+plot(sub1[,3], col=sub1$activity_full, ylab=names(sub1)[3])
+legend("bottomright", legend=unique(sub1$activity_full), col=unique(sub1$activity_full), pch=1)
+```
+
+## Clustering based on average acceleration
+
+Not a good result, no clean groups of data - colors jumbled together at bottom.
+
+```{r}
+myplclust <- function(hclust, lab=hclust$labels, lab.col=rep(1, length(hclust$labels)),
+                  hang=0.1,...) {
+        y <- rep(hclust$height, 2)
+        x <- as.numeric(hclust$merge)
+        y <- y[which(x < 0)]
+        x <- x[which(x < 0)]
+        x <- abs(x)
+        y <- y[order(x)]
+        x <- x[order(x)]
+        plot(hclust, labels=FALSE, hang=hang, ...)
+        text(x=x, y=y[hclust$order] - (max(hclust$height)*hang), labels=lab[hclust$order],
+             col=lab.col[hclust$order], srt=90, adj=c(1,0.5), xpd=NA, ...)
+}
+```
+
+```{r}
+distanceMatrix <- dist(sub1[2:4])
+hclustering <- hclust(distanceMatrix)
+myplclust(hclustering, lab.col=unclass(sub1$activity_full))
+```
+
+As that did not show up any results, try plotting max acceleration.
+
+For things like laying, standing, sitting - nothing, but for the active stuff, there is much more info.
+
+
+```{r}
+par(mfrow=c(1,2))
+plot(sub1[,11], pch=19, col=sub1$activity_full, ylab=names(sub1)[11])
+plot(sub1[,12], pch=19, col=sub1$activity_full, ylab=names(sub1)[12])
+```
+
+so, show dendogram of that info. Can see two very distinct clusters. on right non-moving activities, and on the left is the active stuff.
+
+```{r}
+distanceMatrix <- dist(sub1[11:13])
+hclustering <- hclust(distanceMatrix)
+myplclust(hclustering, lab.col=unclass(sub1$activity_full))
+```
+
+## SVD
+
+Try a svd, but get rid of the subject and activity columns.
+
+look at first and second sigular vectors, colour code by activity. Can see similar break down - can divide the active, but not the inactive tasks.
+
+```{r}
+sub1_stg <- sub1[, -c(1,563,564)]
+svd1 <- svd(scale(sub1[, -c(1,563,564)]))
+par(mfrow=c(1,2))
+plot(svd1$u[,1], col=sub1$activity_full, pch=19)
+plot(svd1$u[,2], col=sub1$activity_full, pch=19)
+
+```
+
+```{r}
+names(sub1[1:10])
+```
+
+## Find maximum contributer
+
+Lets try to figure out which of the contributures is contributing most to the variations.
+
+```{r}
+plot(svd1$v[,2], pch=19)
+
+```
+
+```{r}
+maxContrib <- which.max(svd1$v[,2])
+distanceMatrix <- dist(sub1[, c(10:12, maxContrib)])
+hclustering <- hclust(distanceMatrix)
+myplclust(hclustering, lab.col = unclass(sub1$activity_full))
+```
+
+What is the max Contributer?
+
+```{r}
+# need to increment by 1, and I removed the first column in sub1 to svd1.
+names(sub1)[maxContrib+1]
+
+```
+
+
+## Try a Different clustering method
+
+Need to be careful with kmeans, as can get different result based on the start locations.
+Can see results of first clustering is jubled. Clust 1 includes both laying and sitting.
+
+If repeat, will get diferent results.
+
+
+```{r}
+kClust <- kmeans(sub1[, -c(1,563,564)], centers = 6)
+table(kClust$cluster, sub1$activity_full)
+```
+
+Try 100 iterations, look at best results. Still some of the clusters have multiple values.
+
+```{r}
+kClust <- kmeans(sub1[, -c(1,563,564)], centers = 6, nstart=100)
+table(kClust$cluster, sub1$activity_full)
+```
+
+Take these results, see which values drive the cluster location (ie what determines the centre of the cluster)
+
+for us, cluster two is mainly laying.
+
+High values for first 3, rest are very low
+
+```{r}
+plot(kClust$center[2, 1:10], pch=19, ylab="Cluster Centre", xlab="")
+```
+
+For the cluster on walking, the driving items are completely different, and spread over quite a few....
+
+```{r}
+plot(kClust$center[1, 1:10], pch=19, ylab="Cluster Centre", xlab="")
+
+```
+
+
+So, this is the "fust cut" of the analysis. 
+
+can clearly seperate out the active activities, but not the sedentary activities.
+
+Next round of investigation would be to only look at sedentary, and see what seperates them. By removing all of the active stuff, the scale of difference would be compeltely different.
+
