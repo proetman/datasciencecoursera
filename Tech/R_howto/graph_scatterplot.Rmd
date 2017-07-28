@@ -20,7 +20,7 @@ Looks like there are a bunch of graphics parameters that can be added to each gr
 ## Load Data to plot
 ```{r}
 
-pollution <- read.csv('C:/work/R/datasciencecoursera/Course4_ExploreData/Week1/avgpm25.csv', colClasses = c('numeric','character','factor','numeric','numeric'))
+pollution <- read.csv('C:/users/paul/work/R/data_science_courses/04_ExploratoryAnalysis/exploratoryGraphs/data/avgpm25.csv', colClasses = c('numeric','character','factor','numeric','numeric'))
 head(pollution)
 
 ```

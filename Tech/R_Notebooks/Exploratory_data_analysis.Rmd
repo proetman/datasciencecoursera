@@ -25,6 +25,8 @@ y_file <- paste(raw_data, "y_train.txt", sep="/")
 
 subjects <- read.delim(subjects_file, header=FALSE)
 activities <- read.delim(y_file, header=FALSE)
+```
+```{r}
 data <- read.fwf(x_file, rep(16, 561))
 ```
 
