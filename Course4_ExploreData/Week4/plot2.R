@@ -17,6 +17,7 @@ zip_file <- paste(sep='/', cwd, 'exdata%2Fdata%2FNEI_data.zip')
 nei_rds <- paste(sep='/', cwd, 'summarySCC_PM25.rds')
 scc_rds <- paste(sep='/', cwd, 'Source_Classification_Code.rds')
 target_file <- paste(sep='/', cwd, 'plot2.png')
+title <- "Annual PM2.5 emissions for Baltimore \nfor all sources \n(Thousands of tons)"
 
 # Download the data, if required - and unzip
 if (! file.exists(zip_file)) {
@@ -35,15 +36,24 @@ SCC <- readRDS(scc_rds)
 #              in Baltimore city, Maryland.
 #              Use Base plotting system.
 
+# subset Baltimore data only
 NEI_baltimore <- subset(NEI, fips == "24510")
-total_baltimore_by_year <- aggregate(NEI_baltimore$Emissions, by=list(NEI_baltimore$year), FUN=sum)
+
+# Aggregate the data
+total_baltimore_by_year <- aggregate(NEI_baltimore$Emissions,
+                                     by=list(NEI_baltimore$year),
+                                     FUN=sum)
+
+# set column names
 names(total_baltimore_by_year) <- c('Year','Total.Emissions.Baltimore')
 
+# plot the data
 png(filename = target_file)
 
 plot(total_baltimore_by_year,
      pch=19,
-     main="Annual PM2.5 emissions for Baltimore \nfor all sources \n(Thousands of tons)",
+     main=title,
+     ylab = "Total Emissions Baltimore",
      xlim=c(1998, 2009))
 
 lines(total_baltimore_by_year, lwd=2)

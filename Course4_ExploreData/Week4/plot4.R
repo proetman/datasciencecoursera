@@ -17,6 +17,7 @@ zip_file <- paste(sep='/', cwd, 'exdata%2Fdata%2FNEI_data.zip')
 nei_rds <- paste(sep='/', cwd, 'summarySCC_PM25.rds')
 scc_rds <- paste(sep='/', cwd, 'Source_Classification_Code.rds')
 target_file <- paste(sep='/', cwd, 'plot4.png')
+title <- "Annual PM2.5 emissions for Combustion-related coal \n(Thousands of tons)"
 
 # Download the data, if required - and unzip
 if (! file.exists(zip_file)) {
@@ -43,13 +44,22 @@ coal <- subset(NEI, grepl("coal", EI.Sector, ignore.case = TRUE))
 # Recalculate the factors
 coal$EI.Sector <- factor(coal$EI.Sector)
 
+# Aggregate the data
 coal_by_year <- aggregate(coal$Emissions, by=list(coal$year),  FUN=sum)
-
 names(coal_by_year) <- c('Year','Total.Emissions')
+coal_by_year$Total.Emissions <- coal_by_year$Total.Emissions / 1000
 
 
+# Plot the data
 png(filename = target_file)
 
-plot(coal_by_year)
+plot(coal_by_year,
+     main=title,
+     pch=19,
+     ylab = "Total Emissions",
+     xlim=c(1998, 2009))
+
+lines(coal_by_year, lwd=2)
+
 dev.off()
 print(paste("Output file: ", target_file))
