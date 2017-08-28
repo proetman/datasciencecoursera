@@ -125,7 +125,54 @@ Key challenge (from Dan Myer): "Ask yourself, what problem have you solved, ever
 
 ### Define Question
 
+defining question is most powerful dimension reduction tool ever!
+
+by narrow down on question, can remove a bunch of data that is unrelated to question, this simplifies everything enourmously.
+
+
+
+
+
 ![Question](define_question.png)
+
+1. statistical methods development
+2. *danger zone*
+3. proper data analysis
+
+(1) is only done by specialist statitision maths guru's, not very common.
+(2) getting data, and find random corrolations without understanding the science behind it is dangerours
+(3) understand the science, look at the data, analysis - do stuff properly.
+ 
+### Example: Can I automatically detect email that are spam or not.
+
+#### define the question
+First: make it concrete - can I use quantitative characteristics of the emails to classify them as SPAM/HAM?
+
+#### define ideal data set
+data set will depend on your goal
+
+- descriptive: whole population (eg all the emails in the universe)
+- exploratory: random sample with many variables measured
+- inferential: the right population, randomly sampled - need to be very careful about the data set chosen. sampling method very important to choose carefully.
+- predictive: test and training dataset from the same population
+- caussal: data from randomized study (if I modify this, then this will occur)
+- mechanistic: data about all compontents of the system.
+
+Our example: best dataset would be all emails from gmail. But we cannot get access to that, so what is the next best solution?
+May need to buy it.
+Be sure to accept terms of use
+if data dont exists, you may need to create it.
+
+possible dataset from UCI Machine Learning
+http://archive.ics.uci.edu/ml/datasets/Spambase
+
+
+#### determine what data you can access
+
+#### obtain data
+
+#### clean the data
+
 
 
 
