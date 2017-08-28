@@ -42,6 +42,90 @@ Example: air pollution and health research
 
 When generating report, author works from left to right , but the reader of the article has to work from right to left.
 
-![Caption](research_pipeline_lecture3.png)
+![Research Pipeline](research_pipeline_lecture3.png)
+
+## IOM Report
+report generated for all the "omics" fields of study, to give some level of credibility (after a few cases where results were not reproducable)
+
+- **data/metadata** available to public
+- **code** and fully specified computational procedures sustainably available.
+- code will **encompass all of the steps of computational analysis**. All areas of code need to be tranperantly available. 
+
+What is needed for reproducable research
+
+- analytic data is available
+- analytic code is available
+- doc code and data
+- standard means of distribution
+
+note: raw data may be interesting, but often not practical to publish.
+
+Challenges:
+
+- author: considerable work to publish
+- reader: work to find and download, piece code and data together by hand
+- reader may not have same resourses as author (eg enourmous computing cluster)
+- few tools to help authors (but list is growning!)
+
+
+what ends up happening:
+
+- authors just put stuff on web
+- (infamous) journal supplimentary materials
+- only a few central databases where authors can publish
+
+- readers manually put code and data together
+- piece stuff together
+
+## Literate (statistical) programming
+
+* article is a stream of **text** and **code**
+* analysis code is broken up into text and code chunks
+* each code chunk loads data and computes results
+* presentation code formats results (graphs, tables, figures, etc)
+* article text explains what is going on
+* literate programs can be **weaved** to produce human readable doc, and **tangled** to produce machine readable doc.
+* original program to do this was **sweave**
+* latex for human readable, R for machine readable
+* sweave: http://statistik.lmu.de/~leisch/Sweave
+* sweave has many limitations, 
+  + latex very hard to learn
+  + multiple plots per chunk
+  + mixing programming languages
+  + not frequently updated or actively developed.
+
+* **knitr** alternative
+* does everything that sweave does not
+* uses R, but also other lang
+* doc by markdown, latex, html, etc
+* http://yihui.name/knitr
+* developed by Yihui Xie
+
+## Reproducable Research
+Golden Rule: script everything
+
+## Structure of Data Analysis
+The steps:
+
+* define the question
+* define ideal data set
+* determine what data you can access
+* obtain data
+* clean the data
+* exploratory data analysis
+* statistical prediction/modeling
+* interpret results
+* challenge results
+* synthesize / write up results
+* create reproducable code
+
+part 1 - look at steps from beginning to clean data
+
+Key challenge (from Dan Myer): "Ask yourself, what problem have you solved, ever, that was worth solving, where you knew all of the given information in advance? Where you didn't have a surplus of info and have to filter it out, or you had insufficient info and had to go find some?"
+
+### Define Question
+
+![Question](define_question.png)
+
 
 
