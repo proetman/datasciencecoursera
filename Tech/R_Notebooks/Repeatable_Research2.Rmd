@@ -179,9 +179,8 @@ cannot access all of the gmail package, so make do with the URI machine learning
 
 for our example, the spam/ham dataset is available as part of the kernlab package.
 
-```{r}
-install.packages("kernlab")
-```
+
+note, need to : install.packages("kernlab")
 
 description of data
 http://search.r-project.org/library/kernlab/html/spam.html
@@ -202,7 +201,148 @@ data(spam)
 str(spam[,1:5])
 ```
 
-### Part 2
+
+#### exploratory data analysis
+
+so, lets look at the data now.
+split the data in half with a coin flip to create a training data set and a test dataset.
+
+```{r}
+set.seed(3435)
+trainIndicator = rbinom(4601, size=1, prob=0.5)
+table(trainIndicator)
+```
+```{r}
+trainSpam = spam[trainIndicator == 1,]
+testSpam = spam[trainIndicator == 0,]
+```
+
+Now that the data has been subsampled,
+
+- look at summaries of the data
+- check for missing data
+- create exploratory plots
+- perform exploratory analyses (eg clustering)
+
+```{r}
+names(trainSpam)
+# now look at the freq that each word occurs in each email.
+head(trainSpam)
+
+
+
+```
+
+```{r}
+# look at summary
+table(trainSpam$type)
+```
+
+Lets plot stuff....see what the data looks like. In the log10 plots, add 1 to the results, as taking the log of 0 does not make sense.
+
+First, lets look at the average occurance of capitol letters in mail, compared to whether the mail has been classified as spam (manual classification)
+```{r}
+plot(trainSpam$capitalAve ~ trainSpam$type)
+```
+
+to hard to read, so use the log10 value.
+add 1 to get actual results - cannot do this in final results, but ok in exploratory only.
+makes resulting plot readable.
+
+can see that there is a definate higher occurance of the ave count of upper case letters in spam emails.
+
+```{r}
+plot(log10(trainSpam$capitalAve + 1) ~ trainSpam$type)
+```
+
+Relationship betweeen predictors
+
+
+```{r}
+plot(log10(trainSpam[,1:4] + 1))
+```
+
+Look at the clustering.
+The first cut of this does not give very good results... only seperates out 1 or 2 clusters...
+
+
+```{r}
+hCluster = hclust(dist(t(trainSpam[, 1:57])))
+plot(hCluster)
+```
+
+
+so try again with the log
+
+```{r}
+hClusterMod = hclust(dist(t(log10(trainSpam[, 1:57]+1))))
+plot(hClusterMod)
+```
+
+
+#### statistical prediction/modeling
+
+- should be informed by the results of exploratory analysis
+- exacct methods depend on the question of interest
+- transformations / processing should be accounted for when necessary
+- measures of uncertainty should be reported
+
+
+
+```{r}
+trainSpam$numType = as.numeric(trainSpam$type) - 1
+costFunction = function(x,y) sum(x != (y > 0.5))
+cvError = rep(NA, 55)
+library(boot)
+
+#for(i in 1:55){
+#  lmFormula = reformulate(names(trainSpam)[i], response="numType")
+#  glmFit = glm(lmFormula, family = "binomial", data = trainSpam)
+  # cvError[i] = cv.glm(trainSpam, glmFit, costFunction, 2)$delta[2]
+#}
+# names(trainSpam)[which.min[cvError]]
+```
+
+```{r}
+lmFormula
+```
+
+#### interpret results
+
+- use the appropriate language
+
+  -- describes
+  -- correlates with/associated with
+  -- leads to/causes
+  -- predicts
+  
+- give an explanation
+- interpret coefficients
+- interpret measures of uncertainty
+
+in example:
+
+- the fraction of characters that are dollar signs can be used to predict if an email is spam
+- anything with more than 6.6% dollars signs is classified as spam
+- more dollar signs always means more spam under our prediction
+- our test set error rate was 22.4%
+
+#### challenge results
+
+- challenge all steps (before someone else does it for you!)
+-- question
+-- data source
+-- processing
+-- analysis
+-- conclusions
+- challenge measures of uncertainty
+- challenge choices of terms to include in models
+- think of potential alternative analysis.
+
+
+#### synthesize / write up results
+
+#### create reproducable code
 
 
 
